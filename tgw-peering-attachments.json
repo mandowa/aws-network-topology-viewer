@@ -1,0 +1,104 @@
+{
+    "TransitGatewayPeeringAttachments": [
+        {
+            "TransitGatewayAttachmentId": "tgw-attach-00ebbd69b2c46f7b1",
+            "RequesterTgwInfo": {
+                "TransitGatewayId": "tgw-07a7e47fad4adddaa",
+                "OwnerId": "432300658811",
+                "Region": "ap-northeast-2"
+            },
+            "AccepterTgwInfo": {
+                "TransitGatewayId": "tgw-08ce130fec5a8960f",
+                "OwnerId": "291508826876",
+                "Region": "ap-northeast-2"
+            },
+            "Status": {
+                "Code": "available",
+                "Message": "Available"
+            },
+            "State": "available",
+            "CreationTime": "2026-03-31T05:56:59+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "TCK-Spiral-KR"
+                }
+            ]
+        },
+        {
+            "TransitGatewayAttachmentId": "tgw-attach-0886383021a3345b6",
+            "RequesterTgwInfo": {
+                "TransitGatewayId": "tgw-00c51b4708a49e3c0",
+                "OwnerId": "981045337300",
+                "Region": "ap-northeast-1"
+            },
+            "AccepterTgwInfo": {
+                "TransitGatewayId": "tgw-07a7e47fad4adddaa",
+                "OwnerId": "432300658811",
+                "Region": "ap-northeast-2"
+            },
+            "Status": {
+                "Code": "available",
+                "Message": "Available"
+            },
+            "State": "available",
+            "CreationTime": "2026-03-17T02:37:57+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "Prod_EWSC-Spoke_TCK"
+                }
+            ]
+        },
+        {
+            "TransitGatewayAttachmentId": "tgw-attach-0a51388aa94e53510",
+            "RequesterTgwInfo": {
+                "TransitGatewayId": "tgw-025766b1f30ab631a",
+                "OwnerId": "874637826876",
+                "Region": "ap-northeast-2"
+            },
+            "AccepterTgwInfo": {
+                "TransitGatewayId": "tgw-07a7e47fad4adddaa",
+                "OwnerId": "432300658811",
+                "Region": "ap-northeast-2"
+            },
+            "Status": {
+                "Code": "available",
+                "Message": "Available"
+            },
+            "State": "available",
+            "CreationTime": "2026-03-17T09:41:22+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "TCK-BI"
+                }
+            ]
+        },
+        {
+            "TransitGatewayAttachmentId": "tgw-attach-0afd6ebaa9be1f1fe",
+            "RequesterTgwInfo": {
+                "TransitGatewayId": "tgw-09486d761c59015fd",
+                "OwnerId": "432300658811",
+                "Region": "ap-northeast-2"
+            },
+            "AccepterTgwInfo": {
+                "TransitGatewayId": "tgw-0f794004ff6748b98",
+                "OwnerId": "420009094734",
+                "Region": "ap-northeast-1"
+            },
+            "Status": {
+                "Code": "available",
+                "Message": "Available"
+            },
+            "State": "available",
+            "CreationTime": "2026-03-31T07:53:26+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "DR-Spoke-SMT-Test"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "NatGateways": [
+        {
+            "CreateTime": "2023-07-05T03:31:34+00:00",
+            "NatGatewayAddresses": [
+                {
+                    "AllocationId": "eipalloc-00cceafeef829648c",
+                    "NetworkInterfaceId": "eni-02a728283a405b750",
+                    "PrivateIp": "10.159.128.140",
+                    "PublicIp": "52.78.85.211",
+                    "AssociationId": "eipassoc-00c31ba7161a62a56",
+                    "IsPrimary": true,
+                    "Status": "succeeded"
+                }
+            ],
+            "NatGatewayId": "nat-0df152a5194d45c51",
+            "State": "available",
+            "SubnetId": "subnet-028abbcdac3057a65",
+            "VpcId": "vpc-028bfb7f2d8b84cbf",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "TCK-NAT-gateway"
+                }
+            ],
+            "ConnectivityType": "public"
+        }
+    ]
+}

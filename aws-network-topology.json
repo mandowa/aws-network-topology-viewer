@@ -1,0 +1,1623 @@
+{
+  "metadata": {
+    "schemaVersion": "1.1",
+    "generatedAt": "2026-04-01T14:05:24.763228",
+    "sourceFiles": [
+      "vpcs.json",
+      "subnets.json",
+      "route-tables.json",
+      "internet-gateways.json",
+      "nat-gateways.json",
+      "transit-gateways.json",
+      "tgw-attachments.json",
+      "tgw-peering-attachments.json",
+      "loadbalancers.json"
+    ],
+    "graphModel": {
+      "hierarchySource": "topology.vpcs",
+      "graphSource": "topology.nodes and topology.edges",
+      "indexSource": "topology.indexes",
+      "nodeTypes": [
+        {
+          "type": "transit-gateway",
+          "resourceKind": "aws-resource",
+          "isSynthetic": false,
+          "description": "Canonical AWS Transit Gateway node."
+        },
+        {
+          "type": "vpc",
+          "resourceKind": "aws-resource",
+          "isSynthetic": false,
+          "description": "Canonical AWS VPC node."
+        },
+        {
+          "type": "external-transit-gateway-peer",
+          "resourceKind": "external-placeholder",
+          "isSynthetic": true,
+          "description": "Synthetic node representing a remote TGW peer outside the local snapshots."
+        },
+        {
+          "type": "external-vpc-peer",
+          "resourceKind": "external-placeholder",
+          "isSynthetic": true,
+          "description": "Synthetic node representing external VPC connectivity inferred from local route tables."
+        }
+      ],
+      "edgeTypes": [
+        {
+          "type": "tgw-attachment",
+          "relationship": "attachment",
+          "isSynthetic": false,
+          "isInferred": false,
+          "description": "Canonical TGW attachment edge between a Transit Gateway and VPC."
+        },
+        {
+          "type": "tgw-peering",
+          "relationship": "peering",
+          "isSynthetic": false,
+          "isInferred": false,
+          "description": "TGW peering edge from a local Transit Gateway to a synthetic remote peer node."
+        },
+        {
+          "type": "vpc-peering",
+          "relationship": "reachable-peering",
+          "isSynthetic": true,
+          "isInferred": true,
+          "description": "Inferred connectivity edge from a VPC to a synthetic external peer node using route table evidence."
+        }
+      ]
+    }
+  },
+  "summary": {
+    "vpcCount": 2,
+    "subnetCount": 23,
+    "transitGatewayCount": 2,
+    "transitGatewayPeeringCount": 4,
+    "externalTransitGatewayPeerCount": 4,
+    "externalVpcPeeringCount": 1,
+    "internetGatewayCount": 2,
+    "natGatewayCount": 1,
+    "loadBalancerCount": 30,
+    "publicLoadBalancerCount": 3,
+    "internalLoadBalancerCount": 27,
+    "purposeGroups": [
+      {
+        "name": "Public Edge",
+        "subnetCount": 6
+      },
+      {
+        "name": "Security",
+        "subnetCount": 4
+      },
+      {
+        "name": "Cloud Native",
+        "subnetCount": 4
+      },
+      {
+        "name": "Platform",
+        "subnetCount": 4
+      },
+      {
+        "name": "DMZ",
+        "subnetCount": 2
+      },
+      {
+        "name": "Private App",
+        "subnetCount": 2
+      },
+      {
+        "name": "Application",
+        "subnetCount": 1
+      }
+    ]
+  },
+  "topology": {
+    "vpcs": [
+      {
+        "id": "vpc-028bfb7f2d8b84cbf",
+        "graphNodeId": "vpc:vpc-028bfb7f2d8b84cbf",
+        "name": "Security",
+        "cidrBlocks": [
+          "10.159.128.0/24"
+        ],
+        "roleSummary": "Roles: Security 4, Public Edge 2",
+        "subnetCounts": {
+          "total": 6,
+          "public": 2,
+          "private": 4
+        },
+        "availabilityZones": [
+          {
+            "availabilityZone": "ap-northeast-2a",
+            "subnets": [
+              {
+                "id": "subnet-0a5f8a36e95cab34c",
+                "name": "tck-inspection-private-a",
+                "displayName": "tck-inspection-private-a",
+                "alias": "",
+                "category": "Security",
+                "cidr": "10.159.128.0/27",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "0.0.0.0/0 → i-02eb3925e37a0ca0e"
+                ]
+              },
+              {
+                "id": "subnet-028abbcdac3057a65",
+                "name": "tck-inspection-public-a",
+                "displayName": "tck-inspection-public-a",
+                "alias": "",
+                "category": "Public Edge",
+                "cidr": "10.159.128.128/27",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": true,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.0.0.0/8 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → igw-0f788f73b86d16b80"
+                ]
+              },
+              {
+                "id": "subnet-0d225d240b3b217c5",
+                "name": "tck-inspection-tgw-a",
+                "displayName": "tck-inspection-tgw-a",
+                "alias": "",
+                "category": "Security",
+                "cidr": "10.159.128.64/27",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "0.0.0.0/0 → i-02eb3925e37a0ca0e"
+                ]
+              }
+            ]
+          },
+          {
+            "availabilityZone": "ap-northeast-2c",
+            "subnets": [
+              {
+                "id": "subnet-0f1478248ab01ec40",
+                "name": "tck-inspection-private-c",
+                "displayName": "tck-inspection-private-c",
+                "alias": "",
+                "category": "Security",
+                "cidr": "10.159.128.32/27",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "0.0.0.0/0 → i-02eb3925e37a0ca0e"
+                ]
+              },
+              {
+                "id": "subnet-017a166cc02b2125a",
+                "name": "tck-inspection-public-c",
+                "displayName": "tck-inspection-public-c",
+                "alias": "",
+                "category": "Public Edge",
+                "cidr": "10.159.128.160/27",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": true,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.0.0.0/8 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → igw-0f788f73b86d16b80"
+                ]
+              },
+              {
+                "id": "subnet-0efb39be0ee86771f",
+                "name": "tck-inspection-tgw-c",
+                "displayName": "tck-inspection-tgw-c",
+                "alias": "",
+                "category": "Security",
+                "cidr": "10.159.128.96/27",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "0.0.0.0/0 → i-02eb3925e37a0ca0e"
+                ]
+              }
+            ]
+          }
+        ],
+        "internetGateways": [
+          {
+            "id": "igw-0f788f73b86d16b80",
+            "name": "TCK-Inspection-Public",
+            "attachedVpcIds": [
+              "vpc-028bfb7f2d8b84cbf"
+            ]
+          }
+        ],
+        "natGateways": [
+          {
+            "id": "nat-0df152a5194d45c51",
+            "name": "TCK-NAT-gateway",
+            "vpcId": "vpc-028bfb7f2d8b84cbf",
+            "subnetId": "subnet-028abbcdac3057a65",
+            "state": "available",
+            "connectivityType": "public",
+            "publicIps": [
+              "52.78.85.211"
+            ],
+            "privateIps": [
+              "10.159.128.140"
+            ]
+          }
+        ],
+        "loadBalancers": [],
+        "transitGateways": [
+          {
+            "id": "tgw-09486d761c59015fd",
+            "name": "TGW-EWSC",
+            "ownerId": "432300658811",
+            "state": "available",
+            "attachedVpcIds": [
+              "vpc-0a0fb3ab856e73fa4",
+              "vpc-028bfb7f2d8b84cbf"
+            ],
+            "attachmentCount": 2,
+            "peeringCount": 1
+          }
+        ],
+        "connectedGraphNodeIds": [
+          "tgw:tgw-09486d761c59015fd"
+        ]
+      },
+      {
+        "id": "vpc-0a0fb3ab856e73fa4",
+        "graphNodeId": "vpc:vpc-0a0fb3ab856e73fa4",
+        "name": "TCK",
+        "cidrBlocks": [
+          "10.159.64.0/18",
+          "10.158.192.0/18"
+        ],
+        "roleSummary": "Roles: Public Edge 4, Cloud Native 4, Platform 4",
+        "subnetCounts": {
+          "total": 17,
+          "public": 4,
+          "private": 13
+        },
+        "availabilityZones": [
+          {
+            "availabilityZone": "ap-northeast-2a",
+            "subnets": [
+              {
+                "id": "subnet-0351f86410a93ceec",
+                "name": "TCK_CloudNativePrivate-a",
+                "displayName": "CloudNativePrivate-computing-a",
+                "alias": "CloudNativePrivate-computing-a",
+                "category": "Cloud Native",
+                "cidr": "10.159.68.0/22",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-0d48037c8f0503252",
+                "name": "TCK_CloudNativePublic-a",
+                "displayName": "CloudNativePublic-computing-a",
+                "alias": "CloudNativePublic-computing-a",
+                "category": "Public Edge",
+                "cidr": "10.159.76.0/22",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": true,
+                "mapPublicIpOnLaunch": true,
+                "routeSummary": [
+                  "10.104.4.0/23 → tgw-07a7e47fad4adddaa",
+                  "10.107.16.0/20 → pcx-0818b6b5dedf5320d",
+                  "10.107.32.0/20 → pcx-0818b6b5dedf5320d",
+                  "0.0.0.0/0 → igw-085161accd6cee729"
+                ]
+              },
+              {
+                "id": "subnet-08a3e657d4aca6c2e",
+                "name": "TCK_DMZ-a",
+                "displayName": "DMZ-computing-a",
+                "alias": "DMZ-computing-a",
+                "category": "DMZ",
+                "cidr": "10.159.88.0/21",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-09f8a706a17d836f1",
+                "name": "TCK_EKS-a",
+                "displayName": "EKS-computing-a",
+                "alias": "EKS-computing-a",
+                "category": "Cloud Native",
+                "cidr": "10.159.120.0/23",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-07ead602630fc26b6",
+                "name": "TCK_EKS_Shared-a",
+                "displayName": "TCK_EKS_Shared-a",
+                "alias": "",
+                "category": "Platform",
+                "cidr": "10.158.192.0/19",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-0a3c7b8edd005b7c9",
+                "name": "TCK_F5AddOn1-a",
+                "displayName": "TCK_F5AddOn1-a",
+                "alias": "",
+                "category": "Public Edge",
+                "cidr": "10.159.86.32/27",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": true,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.104.4.0/23 → tgw-07a7e47fad4adddaa",
+                  "10.107.16.0/20 → pcx-0818b6b5dedf5320d",
+                  "10.107.32.0/20 → pcx-0818b6b5dedf5320d",
+                  "0.0.0.0/0 → igw-085161accd6cee729"
+                ]
+              },
+              {
+                "id": "subnet-0c7344259c4284438",
+                "name": "TCK_InfraMgmt-a",
+                "displayName": "TCK_InfraMgmt-a",
+                "alias": "",
+                "category": "Platform",
+                "cidr": "10.159.84.0/24",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-0302d7ab845aaf8d6",
+                "name": "TCK_PackerBuilder-a",
+                "displayName": "PackerBuilder-computing-a",
+                "alias": "PackerBuilder-computing-a",
+                "category": "Application",
+                "cidr": "10.159.86.0/27",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-06c737b03fe38ba34",
+                "name": "TCK_Trusted-a",
+                "displayName": "Trusted-computing-a",
+                "alias": "Trusted-computing-a",
+                "category": "Private App",
+                "cidr": "10.159.104.0/21",
+                "availabilityZone": "ap-northeast-2a",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              }
+            ]
+          },
+          {
+            "availabilityZone": "ap-northeast-2c",
+            "subnets": [
+              {
+                "id": "subnet-0724d867483345425",
+                "name": "TCK_CloudNativePrivate-c",
+                "displayName": "CloudNativePrivate-computing-c",
+                "alias": "CloudNativePrivate-computing-c",
+                "category": "Cloud Native",
+                "cidr": "10.159.72.0/22",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-02d396bf46935e469",
+                "name": "TCK_CloudNativePublic-c",
+                "displayName": "CloudNativePublic-computing-c",
+                "alias": "CloudNativePublic-computing-c",
+                "category": "Public Edge",
+                "cidr": "10.159.80.0/22",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": true,
+                "mapPublicIpOnLaunch": true,
+                "routeSummary": [
+                  "10.104.4.0/23 → tgw-07a7e47fad4adddaa",
+                  "10.107.16.0/20 → pcx-0818b6b5dedf5320d",
+                  "10.107.32.0/20 → pcx-0818b6b5dedf5320d",
+                  "0.0.0.0/0 → igw-085161accd6cee729"
+                ]
+              },
+              {
+                "id": "subnet-0de894dc311526331",
+                "name": "TCK_DMZ-c",
+                "displayName": "DMZ-computing-c",
+                "alias": "DMZ-computing-c",
+                "category": "DMZ",
+                "cidr": "10.159.96.0/21",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-050efb36d914818db",
+                "name": "TCK_EKS-c",
+                "displayName": "EKS-computing-c",
+                "alias": "EKS-computing-c",
+                "category": "Cloud Native",
+                "cidr": "10.159.122.0/23",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-0340f73187775508d",
+                "name": "TCK_EKS_Shared-c",
+                "displayName": "TCK_EKS_Shared-c",
+                "alias": "",
+                "category": "Platform",
+                "cidr": "10.158.224.0/19",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-06f98da6fc497e50f",
+                "name": "TCK_F5AddOn1-c",
+                "displayName": "TCK_F5AddOn1-c",
+                "alias": "",
+                "category": "Public Edge",
+                "cidr": "10.159.86.64/27",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": true,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.104.4.0/23 → tgw-07a7e47fad4adddaa",
+                  "10.107.16.0/20 → pcx-0818b6b5dedf5320d",
+                  "10.107.32.0/20 → pcx-0818b6b5dedf5320d",
+                  "0.0.0.0/0 → igw-085161accd6cee729"
+                ]
+              },
+              {
+                "id": "subnet-0315cdbb3de9ccc35",
+                "name": "TCK_InfraMgmt-c",
+                "displayName": "TCK_InfraMgmt-c",
+                "alias": "",
+                "category": "Platform",
+                "cidr": "10.159.85.0/24",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              },
+              {
+                "id": "subnet-0a205cd8439d83829",
+                "name": "TCK_Trusted-c",
+                "displayName": "Trusted-computing-c",
+                "alias": "Trusted-computing-c",
+                "category": "Private App",
+                "cidr": "10.159.112.0/21",
+                "availabilityZone": "ap-northeast-2c",
+                "isPublic": false,
+                "mapPublicIpOnLaunch": false,
+                "routeSummary": [
+                  "10.199.0.0/16 → tgw-09486d761c59015fd",
+                  "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
+                  "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ]
+              }
+            ]
+          }
+        ],
+        "internetGateways": [
+          {
+            "id": "igw-085161accd6cee729",
+            "name": "TCK",
+            "attachedVpcIds": [
+              "vpc-0a0fb3ab856e73fa4"
+            ]
+          }
+        ],
+        "natGateways": [],
+        "loadBalancers": [
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/vault-tck/05f5d7118188d05f",
+            "name": "vault-tck",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "vault-tck-05f5d7118188d05f.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0a205cd8439d83829",
+              "subnet-06c737b03fe38ba34"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/operator-security-api-nlb/0775ecb399b10b3f",
+            "name": "operator-security-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "operator-security-api-nlb-0775ecb399b10b3f.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0724d867483345425",
+              "subnet-0351f86410a93ceec"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/recommendation-public-api-nlb/53ebb1281dbce163",
+            "name": "recommendation-public-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "recommendation-public-api-nlb-53ebb1281dbce163.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0724d867483345425",
+              "subnet-0351f86410a93ceec"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/pubsubplaycheckdata/5694fdd329cb4902",
+            "name": "pubsubplaycheckdata",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "pubsubplaycheckdata-5694fdd329cb4902.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0724d867483345425",
+              "subnet-0351f86410a93ceec"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/pubsubredis/628fe62a5d8fa2e2",
+            "name": "pubsubredis",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "pubsubredis-628fe62a5d8fa2e2.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/account-api-nlb/6d74987dc30c7e13",
+            "name": "account-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "account-api-nlb-6d74987dc30c7e13.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/shared-user-public-api-nlb/74fd5ed4048d39da",
+            "name": "shared-user-public-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "shared-user-public-api-nlb-74fd5ed4048d39da.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/push-vnext-api-public-nlb/9a2c3ecfd2f09ee9",
+            "name": "push-vnext-api-public-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "push-vnext-api-public-nlb-9a2c3ecfd2f09ee9.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/freegames-public-api-nlb/9bfb9522ebdc871f",
+            "name": "freegames-public-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "freegames-public-api-nlb-9bfb9522ebdc871f.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0724d867483345425",
+              "subnet-0351f86410a93ceec"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/ussv2-api-nlb/a327557fa93072db",
+            "name": "ussv2-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "ussv2-api-nlb-a327557fa93072db.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0724d867483345425",
+              "subnet-0351f86410a93ceec"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/device-detection-api-nlb/b02ca07c164bfb46",
+            "name": "device-detection-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "device-detection-api-nlb-b02ca07c164bfb46.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/pubsubdata/d2c057a5a7789ab8",
+            "name": "pubsubdata",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "pubsubdata-d2c057a5a7789ab8.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/registration-api-nlb/dacef677cad136cb",
+            "name": "registration-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "registration-api-nlb-dacef677cad136cb.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0724d867483345425",
+              "subnet-0351f86410a93ceec"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/balance-api-nlb/de9da5325f029fdf",
+            "name": "balance-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "balance-api-nlb-de9da5325f029fdf.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0724d867483345425",
+              "subnet-0351f86410a93ceec"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/k8s-istiosys-istioing-aaa48fbae1/e80411b70a1abd44",
+            "name": "k8s-istiosys-istioing-aaa48fbae1",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "k8s-istiosys-istioing-aaa48fbae1-e80411b70a1abd44.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-050efb36d914818db",
+              "subnet-09f8a706a17d836f1"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/dftdeploy/e94e1dfd90e59fb2",
+            "name": "dftdeploy",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "dftdeploy-e94e1dfd90e59fb2.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/freegames-api-nlb/f1bc07b024f8f726",
+            "name": "freegames-api-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "freegames-api-nlb-f1bc07b024f8f726.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0724d867483345425",
+              "subnet-0351f86410a93ceec"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/net/backoffice-reconcile-nlb/f61658aac9d9e391",
+            "name": "backoffice-reconcile-nlb",
+            "scheme": "internal",
+            "type": "network",
+            "dnsName": "backoffice-reconcile-nlb-f61658aac9d9e391.elb.ap-northeast-2.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/pubsub/41161ee1f916deb5",
+            "name": "pubsub",
+            "scheme": "internal",
+            "type": "application",
+            "dnsName": "internal-pubsub-1371859206.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/api88/67fee21afd402dee",
+            "name": "api88",
+            "scheme": "internal",
+            "type": "application",
+            "dnsName": "internal-api88-296601690.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/ext-api88/acedd1a678b2c7ef",
+            "name": "ext-api88",
+            "scheme": "internet-facing",
+            "type": "application",
+            "dnsName": "ext-api88-2059202929.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-02d396bf46935e469",
+              "subnet-0d48037c8f0503252"
+            ],
+            "isPublic": true
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/shared-user-public-api-alb/63bafc43e040f966",
+            "name": "shared-user-public-api-alb",
+            "scheme": "internal",
+            "type": "application",
+            "dnsName": "internal-shared-user-public-api-alb-975141376.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/couchbase/e45611af851c7e78",
+            "name": "couchbase",
+            "scheme": "internal",
+            "type": "application",
+            "dnsName": "internal-couchbase-467042139.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/pubsubplaycheck/4706398cff14be3f",
+            "name": "pubsubplaycheck",
+            "scheme": "internal",
+            "type": "application",
+            "dnsName": "internal-pubsubplaycheck-1731987.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/bankingapi/9ac96741df010ec6",
+            "name": "bankingapi",
+            "scheme": "internal",
+            "type": "application",
+            "dnsName": "internal-bankingapi-863071478.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/apex-api/7f1cd9afac96b26d",
+            "name": "apex-api",
+            "scheme": "internal",
+            "type": "application",
+            "dnsName": "internal-apex-api-1035791988.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/ext-disco/7776c351453dfdde",
+            "name": "ext-disco",
+            "scheme": "internet-facing",
+            "type": "application",
+            "dnsName": "ext-disco-269942525.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-02d396bf46935e469",
+              "subnet-0d48037c8f0503252"
+            ],
+            "isPublic": true
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/int-mgp/77975f96c37c0c91",
+            "name": "int-mgp",
+            "scheme": "internal",
+            "type": "application",
+            "dnsName": "internal-int-mgp-1229636622.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-0351f86410a93ceec",
+              "subnet-0724d867483345425"
+            ],
+            "isPublic": false
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/ext-api8891/b9f3191a7cbb0e6d",
+            "name": "ext-api8891",
+            "scheme": "internet-facing",
+            "type": "application",
+            "dnsName": "ext-api8891-345345072.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-02d396bf46935e469",
+              "subnet-0d48037c8f0503252"
+            ],
+            "isPublic": true
+          },
+          {
+            "id": "arn:aws:elasticloadbalancing:ap-northeast-2:432300658811:loadbalancer/app/k8s-sharedtools-f9ca67f733/2a8e77624353206d",
+            "name": "k8s-sharedtools-f9ca67f733",
+            "scheme": "internal",
+            "type": "application",
+            "dnsName": "internal-k8s-sharedtools-f9ca67f733-310061025.ap-northeast-2.elb.amazonaws.com",
+            "state": "active",
+            "subnetIds": [
+              "subnet-050efb36d914818db",
+              "subnet-09f8a706a17d836f1"
+            ],
+            "isPublic": false
+          }
+        ],
+        "transitGateways": [
+          {
+            "id": "tgw-07a7e47fad4adddaa",
+            "name": "TGW-TCK",
+            "ownerId": "432300658811",
+            "state": "available",
+            "attachedVpcIds": [
+              "vpc-0a0fb3ab856e73fa4"
+            ],
+            "attachmentCount": 1,
+            "peeringCount": 3
+          },
+          {
+            "id": "tgw-09486d761c59015fd",
+            "name": "TGW-EWSC",
+            "ownerId": "432300658811",
+            "state": "available",
+            "attachedVpcIds": [
+              "vpc-0a0fb3ab856e73fa4",
+              "vpc-028bfb7f2d8b84cbf"
+            ],
+            "attachmentCount": 2,
+            "peeringCount": 1
+          }
+        ],
+        "connectedGraphNodeIds": [
+          "external-vpc-peer:pcx-0818b6b5dedf5320d",
+          "tgw:tgw-07a7e47fad4adddaa",
+          "tgw:tgw-09486d761c59015fd"
+        ]
+      }
+    ],
+    "transitGateways": [
+      {
+        "id": "tgw-07a7e47fad4adddaa",
+        "name": "TGW-TCK",
+        "ownerId": "432300658811",
+        "state": "available",
+        "attachedVpcIds": [
+          "vpc-0a0fb3ab856e73fa4"
+        ],
+        "attachmentCount": 1,
+        "peeringCount": 3,
+        "graphNodeId": "tgw:tgw-07a7e47fad4adddaa",
+        "connectedGraphNodeIds": [
+          "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300",
+          "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876",
+          "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876",
+          "vpc:vpc-0a0fb3ab856e73fa4"
+        ]
+      },
+      {
+        "id": "tgw-09486d761c59015fd",
+        "name": "TGW-EWSC",
+        "ownerId": "432300658811",
+        "state": "available",
+        "attachedVpcIds": [
+          "vpc-0a0fb3ab856e73fa4",
+          "vpc-028bfb7f2d8b84cbf"
+        ],
+        "attachmentCount": 2,
+        "peeringCount": 1,
+        "graphNodeId": "tgw:tgw-09486d761c59015fd",
+        "connectedGraphNodeIds": [
+          "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734",
+          "vpc:vpc-028bfb7f2d8b84cbf",
+          "vpc:vpc-0a0fb3ab856e73fa4"
+        ]
+      }
+    ],
+    "externalTransitGatewayPeers": [
+      {
+        "LocalTransitGatewayId": "tgw-07a7e47fad4adddaa",
+        "RemoteTransitGatewayId": "tgw-08ce130fec5a8960f",
+        "RemoteAccountId": "291508826876",
+        "RemoteRegion": "ap-northeast-2",
+        "TransitGatewayAttachmentId": "tgw-attach-00ebbd69b2c46f7b1",
+        "State": "available",
+        "Name": "TCK-Spiral-KR",
+        "graphNodeId": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876",
+        "connectedGraphNodeIds": [
+          "tgw:tgw-07a7e47fad4adddaa"
+        ]
+      },
+      {
+        "LocalTransitGatewayId": "tgw-07a7e47fad4adddaa",
+        "RemoteTransitGatewayId": "tgw-025766b1f30ab631a",
+        "RemoteAccountId": "874637826876",
+        "RemoteRegion": "ap-northeast-2",
+        "TransitGatewayAttachmentId": "tgw-attach-0a51388aa94e53510",
+        "State": "available",
+        "Name": "TCK-BI",
+        "graphNodeId": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876",
+        "connectedGraphNodeIds": [
+          "tgw:tgw-07a7e47fad4adddaa"
+        ]
+      },
+      {
+        "LocalTransitGatewayId": "tgw-07a7e47fad4adddaa",
+        "RemoteTransitGatewayId": "tgw-00c51b4708a49e3c0",
+        "RemoteAccountId": "981045337300",
+        "RemoteRegion": "ap-northeast-1",
+        "TransitGatewayAttachmentId": "tgw-attach-0886383021a3345b6",
+        "State": "available",
+        "Name": "Prod_EWSC-Spoke_TCK",
+        "graphNodeId": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300",
+        "connectedGraphNodeIds": [
+          "tgw:tgw-07a7e47fad4adddaa"
+        ]
+      },
+      {
+        "LocalTransitGatewayId": "tgw-09486d761c59015fd",
+        "RemoteTransitGatewayId": "tgw-0f794004ff6748b98",
+        "RemoteAccountId": "420009094734",
+        "RemoteRegion": "ap-northeast-1",
+        "TransitGatewayAttachmentId": "tgw-attach-0afd6ebaa9be1f1fe",
+        "State": "available",
+        "Name": "DR-Spoke-SMT-Test",
+        "graphNodeId": "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734",
+        "connectedGraphNodeIds": [
+          "tgw:tgw-09486d761c59015fd"
+        ]
+      }
+    ],
+    "externalVpcPeerings": [
+      {
+        "VpcPeeringConnectionId": "pcx-0818b6b5dedf5320d",
+        "SourceVpcId": "vpc-0a0fb3ab856e73fa4",
+        "SourceVpcName": "TCK",
+        "Destinations": [
+          "10.107.16.0/20",
+          "10.107.32.0/20"
+        ],
+        "RouteTableIds": [
+          "rtb-03b9f354529bfad4b"
+        ],
+        "graphNodeId": "external-vpc-peer:pcx-0818b6b5dedf5320d",
+        "connectedGraphNodeIds": [
+          "vpc:vpc-0a0fb3ab856e73fa4"
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "id": "tgw:tgw-07a7e47fad4adddaa",
+        "type": "transit-gateway",
+        "resourceId": "tgw-07a7e47fad4adddaa",
+        "resourceKind": "aws-resource",
+        "isSynthetic": false,
+        "label": "TGW-TCK"
+      },
+      {
+        "id": "tgw:tgw-09486d761c59015fd",
+        "type": "transit-gateway",
+        "resourceId": "tgw-09486d761c59015fd",
+        "resourceKind": "aws-resource",
+        "isSynthetic": false,
+        "label": "TGW-EWSC"
+      },
+      {
+        "id": "vpc:vpc-028bfb7f2d8b84cbf",
+        "type": "vpc",
+        "resourceId": "vpc-028bfb7f2d8b84cbf",
+        "resourceKind": "aws-resource",
+        "isSynthetic": false,
+        "label": "Security"
+      },
+      {
+        "id": "vpc:vpc-0a0fb3ab856e73fa4",
+        "type": "vpc",
+        "resourceId": "vpc-0a0fb3ab856e73fa4",
+        "resourceKind": "aws-resource",
+        "isSynthetic": false,
+        "label": "TCK"
+      },
+      {
+        "id": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876",
+        "type": "external-transit-gateway-peer",
+        "resourceId": "tgw-08ce130fec5a8960f",
+        "resourceKind": "external-placeholder",
+        "isSynthetic": true,
+        "isInferred": false,
+        "source": "tgw-peering-attachments.json",
+        "label": "TCK-Spiral-KR"
+      },
+      {
+        "id": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876",
+        "type": "external-transit-gateway-peer",
+        "resourceId": "tgw-025766b1f30ab631a",
+        "resourceKind": "external-placeholder",
+        "isSynthetic": true,
+        "isInferred": false,
+        "source": "tgw-peering-attachments.json",
+        "label": "TCK-BI"
+      },
+      {
+        "id": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300",
+        "type": "external-transit-gateway-peer",
+        "resourceId": "tgw-00c51b4708a49e3c0",
+        "resourceKind": "external-placeholder",
+        "isSynthetic": true,
+        "isInferred": false,
+        "source": "tgw-peering-attachments.json",
+        "label": "Prod_EWSC-Spoke_TCK"
+      },
+      {
+        "id": "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734",
+        "type": "external-transit-gateway-peer",
+        "resourceId": "tgw-0f794004ff6748b98",
+        "resourceKind": "external-placeholder",
+        "isSynthetic": true,
+        "isInferred": false,
+        "source": "tgw-peering-attachments.json",
+        "label": "DR-Spoke-SMT-Test"
+      },
+      {
+        "id": "external-vpc-peer:pcx-0818b6b5dedf5320d",
+        "type": "external-vpc-peer",
+        "resourceId": "pcx-0818b6b5dedf5320d",
+        "resourceKind": "external-placeholder",
+        "isSynthetic": true,
+        "isInferred": true,
+        "source": "route-tables.json",
+        "label": "pcx-0818b6b5dedf5320d"
+      }
+    ],
+    "edges": [
+      {
+        "id": "tgw-attach-0cb09bfcfb9ebc838",
+        "type": "tgw-attachment",
+        "source": "tgw:tgw-07a7e47fad4adddaa",
+        "target": "vpc:vpc-0a0fb3ab856e73fa4",
+        "relationship": "attachment",
+        "resourceKind": "aws-resource",
+        "resourceId": "tgw-attach-0cb09bfcfb9ebc838",
+        "isSynthetic": false,
+        "isInferred": false,
+        "state": "available",
+        "displayLabel": "Prod_EWSC-Spoke_TCK\nvpc: vpc-0a0fb3ab856e73fa4\nState: available",
+        "label": "Prod_EWSC-Spoke_TCK\nvpc: vpc-0a0fb3ab856e73fa4\nState: available"
+      },
+      {
+        "id": "tgw-attach-031b424985fa15de4",
+        "type": "tgw-attachment",
+        "source": "tgw:tgw-09486d761c59015fd",
+        "target": "vpc:vpc-0a0fb3ab856e73fa4",
+        "relationship": "attachment",
+        "resourceKind": "aws-resource",
+        "resourceId": "tgw-attach-031b424985fa15de4",
+        "isSynthetic": false,
+        "isInferred": false,
+        "state": "available",
+        "displayLabel": "DR-Spoke-TCK\nvpc: vpc-0a0fb3ab856e73fa4\nState: available",
+        "label": "DR-Spoke-TCK\nvpc: vpc-0a0fb3ab856e73fa4\nState: available"
+      },
+      {
+        "id": "tgw-attach-0b40fa2765d8daa63",
+        "type": "tgw-attachment",
+        "source": "tgw:tgw-09486d761c59015fd",
+        "target": "vpc:vpc-028bfb7f2d8b84cbf",
+        "relationship": "attachment",
+        "resourceKind": "aws-resource",
+        "resourceId": "tgw-attach-0b40fa2765d8daa63",
+        "isSynthetic": false,
+        "isInferred": false,
+        "state": "available",
+        "displayLabel": "DR_EWSC-Security-TGWSubnet\nvpc: vpc-028bfb7f2d8b84cbf\nState: available",
+        "label": "DR_EWSC-Security-TGWSubnet\nvpc: vpc-028bfb7f2d8b84cbf\nState: available"
+      },
+      {
+        "id": "tgw-attach-00ebbd69b2c46f7b1",
+        "type": "tgw-peering",
+        "source": "tgw:tgw-07a7e47fad4adddaa",
+        "target": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876",
+        "relationship": "peering",
+        "resourceKind": "aws-resource",
+        "resourceId": "tgw-attach-00ebbd69b2c46f7b1",
+        "isSynthetic": false,
+        "isInferred": false,
+        "state": "available"
+      },
+      {
+        "id": "tgw-attach-0a51388aa94e53510",
+        "type": "tgw-peering",
+        "source": "tgw:tgw-07a7e47fad4adddaa",
+        "target": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876",
+        "relationship": "peering",
+        "resourceKind": "aws-resource",
+        "resourceId": "tgw-attach-0a51388aa94e53510",
+        "isSynthetic": false,
+        "isInferred": false,
+        "state": "available"
+      },
+      {
+        "id": "tgw-attach-0886383021a3345b6",
+        "type": "tgw-peering",
+        "source": "tgw:tgw-07a7e47fad4adddaa",
+        "target": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300",
+        "relationship": "peering",
+        "resourceKind": "aws-resource",
+        "resourceId": "tgw-attach-0886383021a3345b6",
+        "isSynthetic": false,
+        "isInferred": false,
+        "state": "available"
+      },
+      {
+        "id": "tgw-attach-0afd6ebaa9be1f1fe",
+        "type": "tgw-peering",
+        "source": "tgw:tgw-09486d761c59015fd",
+        "target": "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734",
+        "relationship": "peering",
+        "resourceKind": "aws-resource",
+        "resourceId": "tgw-attach-0afd6ebaa9be1f1fe",
+        "isSynthetic": false,
+        "isInferred": false,
+        "state": "available"
+      },
+      {
+        "id": "vpc-peering:pcx-0818b6b5dedf5320d",
+        "type": "vpc-peering",
+        "source": "vpc:vpc-0a0fb3ab856e73fa4",
+        "target": "external-vpc-peer:pcx-0818b6b5dedf5320d",
+        "relationship": "reachable-peering",
+        "resourceKind": "external-placeholder",
+        "resourceId": "pcx-0818b6b5dedf5320d",
+        "isSynthetic": true,
+        "isInferred": true,
+        "inferenceSource": "route-tables.json",
+        "routeTableIds": [
+          "rtb-03b9f354529bfad4b"
+        ],
+        "destinations": [
+          "10.107.16.0/20",
+          "10.107.32.0/20"
+        ],
+        "displayLabel": "External VPC Peer\npcx-0818b6b5dedf5320d\nDestinations: 10.107.16.0/20, 10.107.32.0/20\nSource: TCK\nRoute Tables: 1",
+        "label": "External VPC Peer\npcx-0818b6b5dedf5320d\nDestinations: 10.107.16.0/20, 10.107.32.0/20\nSource: TCK\nRoute Tables: 1"
+      }
+    ],
+    "indexes": {
+      "nodeById": {
+        "tgw:tgw-07a7e47fad4adddaa": {
+          "id": "tgw:tgw-07a7e47fad4adddaa",
+          "type": "transit-gateway",
+          "resourceId": "tgw-07a7e47fad4adddaa",
+          "resourceKind": "aws-resource",
+          "isSynthetic": false,
+          "label": "TGW-TCK"
+        },
+        "tgw:tgw-09486d761c59015fd": {
+          "id": "tgw:tgw-09486d761c59015fd",
+          "type": "transit-gateway",
+          "resourceId": "tgw-09486d761c59015fd",
+          "resourceKind": "aws-resource",
+          "isSynthetic": false,
+          "label": "TGW-EWSC"
+        },
+        "vpc:vpc-028bfb7f2d8b84cbf": {
+          "id": "vpc:vpc-028bfb7f2d8b84cbf",
+          "type": "vpc",
+          "resourceId": "vpc-028bfb7f2d8b84cbf",
+          "resourceKind": "aws-resource",
+          "isSynthetic": false,
+          "label": "Security"
+        },
+        "vpc:vpc-0a0fb3ab856e73fa4": {
+          "id": "vpc:vpc-0a0fb3ab856e73fa4",
+          "type": "vpc",
+          "resourceId": "vpc-0a0fb3ab856e73fa4",
+          "resourceKind": "aws-resource",
+          "isSynthetic": false,
+          "label": "TCK"
+        },
+        "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876": {
+          "id": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876",
+          "type": "external-transit-gateway-peer",
+          "resourceId": "tgw-08ce130fec5a8960f",
+          "resourceKind": "external-placeholder",
+          "isSynthetic": true,
+          "isInferred": false,
+          "source": "tgw-peering-attachments.json",
+          "label": "TCK-Spiral-KR"
+        },
+        "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876": {
+          "id": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876",
+          "type": "external-transit-gateway-peer",
+          "resourceId": "tgw-025766b1f30ab631a",
+          "resourceKind": "external-placeholder",
+          "isSynthetic": true,
+          "isInferred": false,
+          "source": "tgw-peering-attachments.json",
+          "label": "TCK-BI"
+        },
+        "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300": {
+          "id": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300",
+          "type": "external-transit-gateway-peer",
+          "resourceId": "tgw-00c51b4708a49e3c0",
+          "resourceKind": "external-placeholder",
+          "isSynthetic": true,
+          "isInferred": false,
+          "source": "tgw-peering-attachments.json",
+          "label": "Prod_EWSC-Spoke_TCK"
+        },
+        "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734": {
+          "id": "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734",
+          "type": "external-transit-gateway-peer",
+          "resourceId": "tgw-0f794004ff6748b98",
+          "resourceKind": "external-placeholder",
+          "isSynthetic": true,
+          "isInferred": false,
+          "source": "tgw-peering-attachments.json",
+          "label": "DR-Spoke-SMT-Test"
+        },
+        "external-vpc-peer:pcx-0818b6b5dedf5320d": {
+          "id": "external-vpc-peer:pcx-0818b6b5dedf5320d",
+          "type": "external-vpc-peer",
+          "resourceId": "pcx-0818b6b5dedf5320d",
+          "resourceKind": "external-placeholder",
+          "isSynthetic": true,
+          "isInferred": true,
+          "source": "route-tables.json",
+          "label": "pcx-0818b6b5dedf5320d"
+        }
+      },
+      "edgeById": {
+        "tgw-attach-0cb09bfcfb9ebc838": {
+          "id": "tgw-attach-0cb09bfcfb9ebc838",
+          "type": "tgw-attachment",
+          "source": "tgw:tgw-07a7e47fad4adddaa",
+          "target": "vpc:vpc-0a0fb3ab856e73fa4",
+          "relationship": "attachment",
+          "resourceKind": "aws-resource",
+          "resourceId": "tgw-attach-0cb09bfcfb9ebc838",
+          "isSynthetic": false,
+          "isInferred": false,
+          "state": "available",
+          "displayLabel": "Prod_EWSC-Spoke_TCK\nvpc: vpc-0a0fb3ab856e73fa4\nState: available",
+          "label": "Prod_EWSC-Spoke_TCK\nvpc: vpc-0a0fb3ab856e73fa4\nState: available"
+        },
+        "tgw-attach-031b424985fa15de4": {
+          "id": "tgw-attach-031b424985fa15de4",
+          "type": "tgw-attachment",
+          "source": "tgw:tgw-09486d761c59015fd",
+          "target": "vpc:vpc-0a0fb3ab856e73fa4",
+          "relationship": "attachment",
+          "resourceKind": "aws-resource",
+          "resourceId": "tgw-attach-031b424985fa15de4",
+          "isSynthetic": false,
+          "isInferred": false,
+          "state": "available",
+          "displayLabel": "DR-Spoke-TCK\nvpc: vpc-0a0fb3ab856e73fa4\nState: available",
+          "label": "DR-Spoke-TCK\nvpc: vpc-0a0fb3ab856e73fa4\nState: available"
+        },
+        "tgw-attach-0b40fa2765d8daa63": {
+          "id": "tgw-attach-0b40fa2765d8daa63",
+          "type": "tgw-attachment",
+          "source": "tgw:tgw-09486d761c59015fd",
+          "target": "vpc:vpc-028bfb7f2d8b84cbf",
+          "relationship": "attachment",
+          "resourceKind": "aws-resource",
+          "resourceId": "tgw-attach-0b40fa2765d8daa63",
+          "isSynthetic": false,
+          "isInferred": false,
+          "state": "available",
+          "displayLabel": "DR_EWSC-Security-TGWSubnet\nvpc: vpc-028bfb7f2d8b84cbf\nState: available",
+          "label": "DR_EWSC-Security-TGWSubnet\nvpc: vpc-028bfb7f2d8b84cbf\nState: available"
+        },
+        "tgw-attach-00ebbd69b2c46f7b1": {
+          "id": "tgw-attach-00ebbd69b2c46f7b1",
+          "type": "tgw-peering",
+          "source": "tgw:tgw-07a7e47fad4adddaa",
+          "target": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876",
+          "relationship": "peering",
+          "resourceKind": "aws-resource",
+          "resourceId": "tgw-attach-00ebbd69b2c46f7b1",
+          "isSynthetic": false,
+          "isInferred": false,
+          "state": "available"
+        },
+        "tgw-attach-0a51388aa94e53510": {
+          "id": "tgw-attach-0a51388aa94e53510",
+          "type": "tgw-peering",
+          "source": "tgw:tgw-07a7e47fad4adddaa",
+          "target": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876",
+          "relationship": "peering",
+          "resourceKind": "aws-resource",
+          "resourceId": "tgw-attach-0a51388aa94e53510",
+          "isSynthetic": false,
+          "isInferred": false,
+          "state": "available"
+        },
+        "tgw-attach-0886383021a3345b6": {
+          "id": "tgw-attach-0886383021a3345b6",
+          "type": "tgw-peering",
+          "source": "tgw:tgw-07a7e47fad4adddaa",
+          "target": "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300",
+          "relationship": "peering",
+          "resourceKind": "aws-resource",
+          "resourceId": "tgw-attach-0886383021a3345b6",
+          "isSynthetic": false,
+          "isInferred": false,
+          "state": "available"
+        },
+        "tgw-attach-0afd6ebaa9be1f1fe": {
+          "id": "tgw-attach-0afd6ebaa9be1f1fe",
+          "type": "tgw-peering",
+          "source": "tgw:tgw-09486d761c59015fd",
+          "target": "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734",
+          "relationship": "peering",
+          "resourceKind": "aws-resource",
+          "resourceId": "tgw-attach-0afd6ebaa9be1f1fe",
+          "isSynthetic": false,
+          "isInferred": false,
+          "state": "available"
+        },
+        "vpc-peering:pcx-0818b6b5dedf5320d": {
+          "id": "vpc-peering:pcx-0818b6b5dedf5320d",
+          "type": "vpc-peering",
+          "source": "vpc:vpc-0a0fb3ab856e73fa4",
+          "target": "external-vpc-peer:pcx-0818b6b5dedf5320d",
+          "relationship": "reachable-peering",
+          "resourceKind": "external-placeholder",
+          "resourceId": "pcx-0818b6b5dedf5320d",
+          "isSynthetic": true,
+          "isInferred": true,
+          "inferenceSource": "route-tables.json",
+          "routeTableIds": [
+            "rtb-03b9f354529bfad4b"
+          ],
+          "destinations": [
+            "10.107.16.0/20",
+            "10.107.32.0/20"
+          ],
+          "displayLabel": "External VPC Peer\npcx-0818b6b5dedf5320d\nDestinations: 10.107.16.0/20, 10.107.32.0/20\nSource: TCK\nRoute Tables: 1",
+          "label": "External VPC Peer\npcx-0818b6b5dedf5320d\nDestinations: 10.107.16.0/20, 10.107.32.0/20\nSource: TCK\nRoute Tables: 1"
+        }
+      },
+      "nodeIdsByType": {
+        "external-transit-gateway-peer": [
+          "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300",
+          "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876",
+          "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876",
+          "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734"
+        ],
+        "external-vpc-peer": [
+          "external-vpc-peer:pcx-0818b6b5dedf5320d"
+        ],
+        "transit-gateway": [
+          "tgw:tgw-07a7e47fad4adddaa",
+          "tgw:tgw-09486d761c59015fd"
+        ],
+        "vpc": [
+          "vpc:vpc-028bfb7f2d8b84cbf",
+          "vpc:vpc-0a0fb3ab856e73fa4"
+        ]
+      },
+      "edgeIdsByType": {
+        "tgw-attachment": [
+          "tgw-attach-031b424985fa15de4",
+          "tgw-attach-0b40fa2765d8daa63",
+          "tgw-attach-0cb09bfcfb9ebc838"
+        ],
+        "tgw-peering": [
+          "tgw-attach-00ebbd69b2c46f7b1",
+          "tgw-attach-0886383021a3345b6",
+          "tgw-attach-0a51388aa94e53510",
+          "tgw-attach-0afd6ebaa9be1f1fe"
+        ],
+        "vpc-peering": [
+          "vpc-peering:pcx-0818b6b5dedf5320d"
+        ]
+      },
+      "outgoingEdgeIdsByNodeId": {
+        "tgw:tgw-07a7e47fad4adddaa": [
+          "tgw-attach-00ebbd69b2c46f7b1",
+          "tgw-attach-0886383021a3345b6",
+          "tgw-attach-0a51388aa94e53510",
+          "tgw-attach-0cb09bfcfb9ebc838"
+        ],
+        "tgw:tgw-09486d761c59015fd": [
+          "tgw-attach-031b424985fa15de4",
+          "tgw-attach-0afd6ebaa9be1f1fe",
+          "tgw-attach-0b40fa2765d8daa63"
+        ],
+        "vpc:vpc-0a0fb3ab856e73fa4": [
+          "vpc-peering:pcx-0818b6b5dedf5320d"
+        ]
+      },
+      "incomingEdgeIdsByNodeId": {
+        "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300": [
+          "tgw-attach-0886383021a3345b6"
+        ],
+        "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876": [
+          "tgw-attach-0a51388aa94e53510"
+        ],
+        "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876": [
+          "tgw-attach-00ebbd69b2c46f7b1"
+        ],
+        "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734": [
+          "tgw-attach-0afd6ebaa9be1f1fe"
+        ],
+        "external-vpc-peer:pcx-0818b6b5dedf5320d": [
+          "vpc-peering:pcx-0818b6b5dedf5320d"
+        ],
+        "vpc:vpc-028bfb7f2d8b84cbf": [
+          "tgw-attach-0b40fa2765d8daa63"
+        ],
+        "vpc:vpc-0a0fb3ab856e73fa4": [
+          "tgw-attach-031b424985fa15de4",
+          "tgw-attach-0cb09bfcfb9ebc838"
+        ]
+      },
+      "adjacentNodeIdsByNodeId": {
+        "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300": [
+          "tgw:tgw-07a7e47fad4adddaa"
+        ],
+        "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876": [
+          "tgw:tgw-07a7e47fad4adddaa"
+        ],
+        "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876": [
+          "tgw:tgw-07a7e47fad4adddaa"
+        ],
+        "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734": [
+          "tgw:tgw-09486d761c59015fd"
+        ],
+        "external-vpc-peer:pcx-0818b6b5dedf5320d": [
+          "vpc:vpc-0a0fb3ab856e73fa4"
+        ],
+        "tgw:tgw-07a7e47fad4adddaa": [
+          "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300",
+          "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-025766b1f30ab631a:874637826876",
+          "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-08ce130fec5a8960f:291508826876",
+          "vpc:vpc-0a0fb3ab856e73fa4"
+        ],
+        "tgw:tgw-09486d761c59015fd": [
+          "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734",
+          "vpc:vpc-028bfb7f2d8b84cbf",
+          "vpc:vpc-0a0fb3ab856e73fa4"
+        ],
+        "vpc:vpc-028bfb7f2d8b84cbf": [
+          "tgw:tgw-09486d761c59015fd"
+        ],
+        "vpc:vpc-0a0fb3ab856e73fa4": [
+          "external-vpc-peer:pcx-0818b6b5dedf5320d",
+          "tgw:tgw-07a7e47fad4adddaa",
+          "tgw:tgw-09486d761c59015fd"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+    "TransitGateways": [
+        {
+            "TransitGatewayId": "tgw-07a7e47fad4adddaa",
+            "TransitGatewayArn": "arn:aws:ec2:ap-northeast-2:432300658811:transit-gateway/tgw-07a7e47fad4adddaa",
+            "State": "available",
+            "OwnerId": "432300658811",
+            "Description": "",
+            "CreationTime": "2026-03-17T02:16:49+00:00",
+            "Options": {
+                "AmazonSideAsn": 64512,
+                "AutoAcceptSharedAttachments": "enable",
+                "DefaultRouteTableAssociation": "enable",
+                "AssociationDefaultRouteTableId": "tgw-rtb-028b118c15fbeed13",
+                "DefaultRouteTablePropagation": "enable",
+                "PropagationDefaultRouteTableId": "tgw-rtb-028b118c15fbeed13",
+                "VpnEcmpSupport": "enable",
+                "DnsSupport": "enable",
+                "SecurityGroupReferencingSupport": "disable",
+                "MulticastSupport": "disable"
+            },
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "TGW-TCK"
+                }
+            ]
+        },
+        {
+            "TransitGatewayId": "tgw-09486d761c59015fd",
+            "TransitGatewayArn": "arn:aws:ec2:ap-northeast-2:432300658811:transit-gateway/tgw-09486d761c59015fd",
+            "State": "available",
+            "OwnerId": "432300658811",
+            "Description": "",
+            "CreationTime": "2026-03-31T07:36:56+00:00",
+            "Options": {
+                "AmazonSideAsn": 64512,
+                "AutoAcceptSharedAttachments": "enable",
+                "DefaultRouteTableAssociation": "disable",
+                "DefaultRouteTablePropagation": "disable",
+                "VpnEcmpSupport": "enable",
+                "DnsSupport": "enable",
+                "SecurityGroupReferencingSupport": "disable",
+                "MulticastSupport": "disable"
+            },
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "TGW-EWSC"
+                }
+            ]
+        }
+    ]
+}

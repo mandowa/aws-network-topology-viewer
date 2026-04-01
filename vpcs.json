@@ -1,0 +1,101 @@
+{
+    "Vpcs": [
+        {
+            "OwnerId": "432300658811",
+            "InstanceTenancy": "default",
+            "CidrBlockAssociationSet": [
+                {
+                    "AssociationId": "vpc-cidr-assoc-0241e6e98ed8150e6",
+                    "CidrBlock": "10.159.128.0/24",
+                    "CidrBlockState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "IsDefault": false,
+            "Tags": [
+                {
+                    "Key": "mga:owner",
+                    "Value": "security"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "Security"
+                },
+                {
+                    "Key": "mga:business",
+                    "Value": "smt"
+                },
+                {
+                    "Key": "mga:description",
+                    "Value": "Inspection"
+                }
+            ],
+            "BlockPublicAccessStates": {
+                "InternetGatewayBlockMode": "off"
+            },
+            "VpcId": "vpc-028bfb7f2d8b84cbf",
+            "State": "available",
+            "CidrBlock": "10.159.128.0/24",
+            "DhcpOptionsId": "dopt-0dac51f4ee226286c"
+        },
+        {
+            "OwnerId": "432300658811",
+            "InstanceTenancy": "default",
+            "CidrBlockAssociationSet": [
+                {
+                    "AssociationId": "vpc-cidr-assoc-081c8597b61ec5651",
+                    "CidrBlock": "10.159.64.0/18",
+                    "CidrBlockState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "AssociationId": "vpc-cidr-assoc-0d7abefce015cca84",
+                    "CidrBlock": "10.158.192.0/18",
+                    "CidrBlockState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "IsDefault": false,
+            "Tags": [
+                {
+                    "Key": "map-migrated",
+                    "Value": "d-server-00er8glasb6x0f"
+                },
+                {
+                    "Key": "mga:owner",
+                    "Value": "datacenter-service"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "TCK"
+                },
+                {
+                    "Key": "mga:description",
+                    "Value": "xxxx"
+                },
+                {
+                    "Key": "mga:business",
+                    "Value": "smt"
+                },
+                {
+                    "Key": "mga:site",
+                    "Value": "tck"
+                },
+                {
+                    "Key": "mga:component",
+                    "Value": "vpc-subnet"
+                }
+            ],
+            "BlockPublicAccessStates": {
+                "InternetGatewayBlockMode": "off"
+            },
+            "VpcId": "vpc-0a0fb3ab856e73fa4",
+            "State": "available",
+            "CidrBlock": "10.159.64.0/18",
+            "DhcpOptionsId": "dopt-0dac51f4ee226286c"
+        }
+    ]
+}
