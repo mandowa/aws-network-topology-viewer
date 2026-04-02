@@ -332,3 +332,27 @@ h1 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
   transition: background 0.15s;
 }
 .upload-btn:hover { background: #1d4ed8; }
+
+/* Upload help section */
+.upload-help {
+  margin-top: 20px; text-align: left; max-width: 600px;
+}
+.upload-help summary {
+  cursor: pointer; font-size: 0.82rem; color: #2563eb; font-weight: 600;
+  text-align: center;
+}
+.upload-help summary:hover { text-decoration: underline; }
+.upload-help-body {
+  margin-top: 12px; font-size: 0.78rem; color: #374151; line-height: 1.6;
+}
+.upload-help-body p { margin: 10px 0 4px; font-weight: 600; }
+.upload-help-body pre {
+  background: #1f2937; color: #e5e7eb; padding: 10px 14px;
+  border-radius: 6px; font-size: 0.72rem; overflow-x: auto;
+  line-height: 1.5; font-family: var(--font-mono);
+  white-space: pre-wrap; word-break: break-all;
+}
+.upload-help-body code {
+  background: #f3f4f6; padding: 1px 5px; border-radius: 3px;
+  font-size: 0.75rem;
+}

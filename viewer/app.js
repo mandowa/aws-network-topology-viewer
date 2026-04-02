@@ -74,6 +74,32 @@ function showUploadUI() {
         Choose File
         <input type="file" id="file-input" accept=".json" hidden/>
       </label>
+      <details class="upload-help">
+        <summary>How to generate this file?</summary>
+        <div class="upload-help-body">
+          <p>1. Clone the repo and install dependencies:</p>
+          <pre>git clone https://github.com/mandowa/aws-network-topology-viewer.git
+cd aws-network-topology-viewer
+python3 -m venv venv &amp;&amp; source venv/bin/activate</pre>
+          <p>2. Export AWS data (replace <code>PROFILE</code> and <code>REGION</code>):</p>
+          <pre>P=PROFILE; R=REGION
+aws ec2 describe-vpcs --profile $P --region $R --output json &gt; vpcs.json
+aws ec2 describe-subnets --profile $P --region $R --output json &gt; subnets.json
+aws ec2 describe-route-tables --profile $P --region $R --output json &gt; route-tables.json
+aws ec2 describe-internet-gateways --profile $P --region $R --output json &gt; internet-gateways.json
+aws ec2 describe-nat-gateways --profile $P --region $R --output json &gt; nat-gateways.json
+aws ec2 describe-transit-gateways --profile $P --region $R --output json &gt; transit-gateways.json
+aws ec2 describe-transit-gateway-attachments --profile $P --region $R --output json &gt; tgw-attachments.json
+aws ec2 describe-transit-gateway-peering-attachments --profile $P --region $R --output json &gt; tgw-peering-attachments.json
+aws ec2 describe-transit-gateway-route-tables --profile $P --region $R --output json &gt; tgw-route-tables.json
+aws elbv2 describe-load-balancers --profile $P --region $R --output json &gt; loadbalancers.json</pre>
+          <p>3. (Optional) Export TGW routes for each route table:</p>
+          <pre>bash fetch-tgw-routes.sh --profile $P --region $R</pre>
+          <p>4. Generate the topology file:</p>
+          <pre>python3 generate_aws_diagram.py</pre>
+          <p>Then upload the generated <code>aws-network-topology.json</code> above.</p>
+        </div>
+      </details>
     </div>
   `;
   document.body.appendChild(overlay);
