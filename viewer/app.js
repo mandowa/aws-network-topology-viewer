@@ -77,10 +77,30 @@ function showUploadUI() {
       <details class="upload-help">
         <summary>How to generate this file?</summary>
         <div class="upload-help-body">
-          <p>1. Clone the repo and install dependencies:</p>
+          <p>0. Required IAM Permissions (read-only):</p>
+          <pre>{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": [
+      "ec2:DescribeVpcs",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeRouteTables",
+      "ec2:DescribeInternetGateways",
+      "ec2:DescribeNatGateways",
+      "ec2:DescribeTransitGateways",
+      "ec2:DescribeTransitGatewayAttachments",
+      "ec2:DescribeTransitGatewayPeeringAttachments",
+      "ec2:DescribeTransitGatewayRouteTables",
+      "ec2:SearchTransitGatewayRoutes",
+      "elasticloadbalancing:DescribeLoadBalancers"
+    ],
+    "Resource": "*"
+  }]
+}</pre>
+          <p>1. Clone the repo:</p>
           <pre>git clone https://github.com/mandowa/aws-network-topology-viewer.git
-cd aws-network-topology-viewer
-python3 -m venv venv &amp;&amp; source venv/bin/activate</pre>
+cd aws-network-topology-viewer</pre>
           <p>2. Export AWS data (replace <code>PROFILE</code> and <code>REGION</code>):</p>
           <pre>P=PROFILE; R=REGION
 aws ec2 describe-vpcs --profile $P --region $R --output json &gt; vpcs.json
