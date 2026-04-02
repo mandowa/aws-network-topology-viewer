@@ -26,9 +26,21 @@ htmlcov/
 # Ruff cache
 .ruff_cache/
 
-# Project specific - example data files (optional)
-# Uncomment if you want to exclude AWS data files
-# *.json
+# Project specific - AWS data files (contain sensitive infra info)
+aws-network-topology.json
+aws-network-architecture.drawio
+vpcs.json
+subnets.json
+route-tables.json
+internet-gateways.json
+nat-gateways.json
+loadbalancers.json
+transit-gateways.json
+tgw-attachments.json
+tgw-peering-attachments.json
+tgw-route-tables.json
+tgw-routes.json
+tgw-routes-tgw-rtb-*.json
 
 # Logs
 *.log

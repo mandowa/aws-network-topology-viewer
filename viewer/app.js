@@ -33,19 +33,88 @@ const nodeStyle = (type) => NODE_STYLES[type] || NODE_STYLES['vpc'];
 
 // ── Init ──
 async function init() {
+  // Try loading from local server first (python -m http.server)
   try {
     const resp = await fetch('../aws-network-topology.json');
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    data = await resp.json();
-    renderMetadata();
-    renderSummary();
-    renderLegend();
-    layoutCache = layoutDiagram();
-    renderDiagram();
-    setupEvents();
-  } catch (e) {
-    $('metadata').textContent = 'Error: ' + e.message;
-  }
+    if (resp.ok) {
+      data = await resp.json();
+      boot();
+      return;
+    }
+  } catch (_) { /* not available, show upload UI */ }
+
+  showUploadUI();
+}
+
+function boot() {
+  renderMetadata();
+  renderSummary();
+  renderLegend();
+  layoutCache = layoutDiagram();
+  renderDiagram();
+  setupEvents();
+  // Hide upload overlay if visible
+  const overlay = $('upload-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+function showUploadUI() {
+  $('metadata').textContent = 'No data loaded — drop or select a topology JSON file';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'upload-overlay';
+  overlay.className = 'upload-overlay';
+  overlay.innerHTML = `
+    <div class="upload-box" id="drop-zone">
+      <div class="upload-icon">📂</div>
+      <div class="upload-title">Load Topology Data</div>
+      <div class="upload-hint">Drag & drop <code>aws-network-topology.json</code> here</div>
+      <div class="upload-or">or</div>
+      <label class="upload-btn">
+        Choose File
+        <input type="file" id="file-input" accept=".json" hidden/>
+      </label>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const dropZone = $('drop-zone');
+  const fileInput = $('file-input');
+
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer?.files[0];
+    if (file) loadFile(file);
+  });
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (file) loadFile(file);
+  });
+
+  // Also allow drop on the whole page
+  document.body.addEventListener('dragover', (e) => e.preventDefault());
+  document.body.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files[0];
+    if (file) loadFile(file);
+  });
+}
+
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      data = JSON.parse(e.target.result);
+      if (!data?.topology?.vpcs) throw new Error('Invalid topology format');
+      boot();
+    } catch (err) {
+      alert('Failed to parse JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
 }
 
 function renderMetadata() {
@@ -1319,6 +1388,14 @@ function setupEvents() {
   $('zoom-reset').addEventListener('click', () => { transform = { x: 0, y: 0, k: 1 }; applyTransform(); });
   $('fit-btn').addEventListener('click', fitToScreen);
   $('panel-close').addEventListener('click', hidePanel);
+
+  // Toolbar file loader
+  const tbFile = $('toolbar-file');
+  if (tbFile) tbFile.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (file) loadFile(file);
+    tbFile.value = '';
+  });
 
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {

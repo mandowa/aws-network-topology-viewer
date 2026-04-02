@@ -307,3 +307,28 @@ h1 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
   padding: 8px; background: #fef2f2; border: 1px solid #fecaca;
   border-radius: 4px; color: #991b1b; font-size: 0.78rem;
 }
+
+/* Upload Overlay */
+.upload-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(249,250,251,0.95);
+  display: flex; align-items: center; justify-content: center;
+}
+.upload-box {
+  background: white; border: 2px dashed #d1d5db; border-radius: 12px;
+  padding: 48px 64px; text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+.upload-box.drag-over { border-color: #2563eb; background: #eff6ff; }
+.upload-icon { font-size: 3rem; margin-bottom: 12px; }
+.upload-title { font-size: 1.2rem; font-weight: 700; color: #1f2937; margin-bottom: 6px; }
+.upload-hint { font-size: 0.85rem; color: #6b7280; }
+.upload-hint code { background: #f3f4f6; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem; }
+.upload-or { color: #9ca3af; font-size: 0.8rem; margin: 12px 0; }
+.upload-btn {
+  display: inline-block; padding: 8px 20px;
+  background: #2563eb; color: white; border-radius: 6px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  transition: background 0.15s;
+}
+.upload-btn:hover { background: #1d4ed8; }
