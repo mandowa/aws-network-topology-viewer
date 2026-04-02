@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schemaVersion": "1.1",
-    "generatedAt": "2026-04-01T14:05:24.763228",
+    "generatedAt": "2026-04-03T00:07:27.057170",
     "sourceFiles": [
       "vpcs.json",
       "subnets.json",
@@ -11,6 +11,7 @@
       "transit-gateways.json",
       "tgw-attachments.json",
       "tgw-peering-attachments.json",
+      "tgw-route-tables.json",
       "loadbalancers.json"
     ],
     "graphModel": {
@@ -142,6 +143,22 @@
                 "mapPublicIpOnLaunch": false,
                 "routeSummary": [
                   "0.0.0.0/0 → i-02eb3925e37a0ca0e"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.159.128.0/24",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-07e470092087bc738"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "i-02eb3925e37a0ca0e",
+                    "nextHopType": "instance",
+                    "state": "active",
+                    "routeTableId": "rtb-07e470092087bc738"
+                  }
                 ]
               },
               {
@@ -157,6 +174,29 @@
                 "routeSummary": [
                   "10.0.0.0/8 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → igw-0f788f73b86d16b80"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.159.128.0/24",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-08110c2ef385412bd"
+                  },
+                  {
+                    "destination": "10.0.0.0/8",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-08110c2ef385412bd"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "igw-0f788f73b86d16b80",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-08110c2ef385412bd"
+                  }
                 ]
               },
               {
@@ -171,6 +211,22 @@
                 "mapPublicIpOnLaunch": false,
                 "routeSummary": [
                   "0.0.0.0/0 → i-02eb3925e37a0ca0e"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.159.128.0/24",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-003a4fd525ab8fe3e"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "i-02eb3925e37a0ca0e",
+                    "nextHopType": "instance",
+                    "state": "active",
+                    "routeTableId": "rtb-003a4fd525ab8fe3e"
+                  }
                 ]
               }
             ]
@@ -190,6 +246,22 @@
                 "mapPublicIpOnLaunch": false,
                 "routeSummary": [
                   "0.0.0.0/0 → i-02eb3925e37a0ca0e"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.159.128.0/24",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-07e470092087bc738"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "i-02eb3925e37a0ca0e",
+                    "nextHopType": "instance",
+                    "state": "active",
+                    "routeTableId": "rtb-07e470092087bc738"
+                  }
                 ]
               },
               {
@@ -205,6 +277,29 @@
                 "routeSummary": [
                   "10.0.0.0/8 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → igw-0f788f73b86d16b80"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.159.128.0/24",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-08110c2ef385412bd"
+                  },
+                  {
+                    "destination": "10.0.0.0/8",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-08110c2ef385412bd"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "igw-0f788f73b86d16b80",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-08110c2ef385412bd"
+                  }
                 ]
               },
               {
@@ -219,6 +314,22 @@
                 "mapPublicIpOnLaunch": false,
                 "routeSummary": [
                   "0.0.0.0/0 → i-02eb3925e37a0ca0e"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.159.128.0/24",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-003a4fd525ab8fe3e"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "i-02eb3925e37a0ca0e",
+                    "nextHopType": "instance",
+                    "state": "active",
+                    "routeTableId": "rtb-003a4fd525ab8fe3e"
+                  }
                 ]
               }
             ]
@@ -261,7 +372,55 @@
               "vpc-028bfb7f2d8b84cbf"
             ],
             "attachmentCount": 2,
-            "peeringCount": 1
+            "peeringCount": 1,
+            "routeTables": [
+              {
+                "id": "tgw-rtb-00b75e32ecbf7bc81",
+                "name": "TGWRT-DR-Security-Prod",
+                "state": "available",
+                "defaultAssociation": false,
+                "defaultPropagation": false,
+                "routes": [
+                  {
+                    "destination": "0.0.0.0/0",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                    "attachmentId": "tgw-attach-031b424985fa15de4"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                    "attachmentId": "tgw-attach-031b424985fa15de4"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "peering:tgw-0f794004ff6748b98",
+                    "attachmentId": "tgw-attach-0afd6ebaa9be1f1fe"
+                  }
+                ]
+              },
+              {
+                "id": "tgw-rtb-0961e9c4c8aa65a29",
+                "name": "TGWRT-DR-Spoke-Prod",
+                "state": "available",
+                "defaultAssociation": false,
+                "defaultPropagation": false,
+                "routes": [
+                  {
+                    "destination": "0.0.0.0/0",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "vpc:vpc-028bfb7f2d8b84cbf",
+                    "attachmentId": "tgw-attach-0b40fa2765d8daa63"
+                  }
+                ]
+              }
+            ]
           }
         ],
         "connectedGraphNodeIds": [
@@ -300,6 +459,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               },
               {
@@ -317,6 +513,50 @@
                   "10.107.16.0/20 → pcx-0818b6b5dedf5320d",
                   "10.107.32.0/20 → pcx-0818b6b5dedf5320d",
                   "0.0.0.0/0 → igw-085161accd6cee729"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.104.4.0/23",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.107.16.0/20",
+                    "nextHopId": "pcx-0818b6b5dedf5320d",
+                    "nextHopType": "vpc-peering",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.107.32.0/20",
+                    "nextHopId": "pcx-0818b6b5dedf5320d",
+                    "nextHopType": "vpc-peering",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "igw-085161accd6cee729",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  }
                 ]
               },
               {
@@ -333,6 +573,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               },
               {
@@ -349,6 +626,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               },
               {
@@ -365,6 +679,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               },
               {
@@ -382,6 +733,50 @@
                   "10.107.16.0/20 → pcx-0818b6b5dedf5320d",
                   "10.107.32.0/20 → pcx-0818b6b5dedf5320d",
                   "0.0.0.0/0 → igw-085161accd6cee729"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.104.4.0/23",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.107.16.0/20",
+                    "nextHopId": "pcx-0818b6b5dedf5320d",
+                    "nextHopType": "vpc-peering",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.107.32.0/20",
+                    "nextHopId": "pcx-0818b6b5dedf5320d",
+                    "nextHopType": "vpc-peering",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "igw-085161accd6cee729",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  }
                 ]
               },
               {
@@ -397,6 +792,36 @@
                 "routeSummary": [
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-08ba6662ebbac6968"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-08ba6662ebbac6968"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-08ba6662ebbac6968"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-08ba6662ebbac6968"
+                  }
                 ]
               },
               {
@@ -413,6 +838,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               },
               {
@@ -429,6 +891,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               }
             ]
@@ -450,6 +949,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               },
               {
@@ -467,6 +1003,50 @@
                   "10.107.16.0/20 → pcx-0818b6b5dedf5320d",
                   "10.107.32.0/20 → pcx-0818b6b5dedf5320d",
                   "0.0.0.0/0 → igw-085161accd6cee729"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.104.4.0/23",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.107.16.0/20",
+                    "nextHopId": "pcx-0818b6b5dedf5320d",
+                    "nextHopType": "vpc-peering",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.107.32.0/20",
+                    "nextHopId": "pcx-0818b6b5dedf5320d",
+                    "nextHopType": "vpc-peering",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "igw-085161accd6cee729",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  }
                 ]
               },
               {
@@ -483,6 +1063,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               },
               {
@@ -499,6 +1116,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               },
               {
@@ -515,6 +1169,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               },
               {
@@ -532,6 +1223,50 @@
                   "10.107.16.0/20 → pcx-0818b6b5dedf5320d",
                   "10.107.32.0/20 → pcx-0818b6b5dedf5320d",
                   "0.0.0.0/0 → igw-085161accd6cee729"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.104.4.0/23",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.107.16.0/20",
+                    "nextHopId": "pcx-0818b6b5dedf5320d",
+                    "nextHopType": "vpc-peering",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.107.32.0/20",
+                    "nextHopId": "pcx-0818b6b5dedf5320d",
+                    "nextHopType": "vpc-peering",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "igw-085161accd6cee729",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-03b9f354529bfad4b"
+                  }
                 ]
               },
               {
@@ -547,6 +1282,36 @@
                 "routeSummary": [
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-08ba6662ebbac6968"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-08ba6662ebbac6968"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-08ba6662ebbac6968"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-08ba6662ebbac6968"
+                  }
                 ]
               },
               {
@@ -563,6 +1328,43 @@
                   "10.199.0.0/16 → tgw-09486d761c59015fd",
                   "0.0.0.0/0 → tgw-07a7e47fad4adddaa",
                   "pl-78a54011 → vpce-0e3db462b671a36f1"
+                ],
+                "routeEntries": [
+                  {
+                    "destination": "10.158.192.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "nextHopId": "local",
+                    "nextHopType": "local",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "nextHopId": "tgw-09486d761c59015fd",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "0.0.0.0/0",
+                    "nextHopId": "tgw-07a7e47fad4adddaa",
+                    "nextHopType": "transit-gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  },
+                  {
+                    "destination": "pl-78a54011",
+                    "nextHopId": "vpce-0e3db462b671a36f1",
+                    "nextHopType": "gateway",
+                    "state": "active",
+                    "routeTableId": "rtb-09eb5b2644642eb17"
+                  }
                 ]
               }
             ]
@@ -980,7 +1782,74 @@
               "vpc-0a0fb3ab856e73fa4"
             ],
             "attachmentCount": 1,
-            "peeringCount": 3
+            "peeringCount": 3,
+            "routeTables": [
+              {
+                "id": "tgw-rtb-028b118c15fbeed13",
+                "name": "RT_Prod_EWSC-Spoke_TCK",
+                "state": "available",
+                "defaultAssociation": true,
+                "defaultPropagation": true,
+                "routes": [
+                  {
+                    "destination": "0.0.0.0/0",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "peering:tgw-00c51b4708a49e3c0",
+                    "attachmentId": "tgw-attach-0886383021a3345b6"
+                  },
+                  {
+                    "destination": "10.107.0.0/16",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "peering:tgw-08ce130fec5a8960f",
+                    "attachmentId": "tgw-attach-00ebbd69b2c46f7b1"
+                  },
+                  {
+                    "destination": "10.158.192.0/18",
+                    "state": "active",
+                    "type": "propagated",
+                    "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                    "attachmentId": "tgw-attach-0cb09bfcfb9ebc838"
+                  },
+                  {
+                    "destination": "10.159.128.0/19",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "peering:tgw-08ce130fec5a8960f",
+                    "attachmentId": "tgw-attach-00ebbd69b2c46f7b1"
+                  },
+                  {
+                    "destination": "10.159.160.0/20",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "peering:tgw-08ce130fec5a8960f",
+                    "attachmentId": "tgw-attach-00ebbd69b2c46f7b1"
+                  },
+                  {
+                    "destination": "10.159.224.0/19",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "peering:tgw-025766b1f30ab631a",
+                    "attachmentId": "tgw-attach-0a51388aa94e53510"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "state": "active",
+                    "type": "propagated",
+                    "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                    "attachmentId": "tgw-attach-0cb09bfcfb9ebc838"
+                  },
+                  {
+                    "destination": "142.250.21.94/32",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                    "attachmentId": "tgw-attach-0cb09bfcfb9ebc838"
+                  }
+                ]
+              }
+            ]
           },
           {
             "id": "tgw-09486d761c59015fd",
@@ -992,7 +1861,55 @@
               "vpc-028bfb7f2d8b84cbf"
             ],
             "attachmentCount": 2,
-            "peeringCount": 1
+            "peeringCount": 1,
+            "routeTables": [
+              {
+                "id": "tgw-rtb-00b75e32ecbf7bc81",
+                "name": "TGWRT-DR-Security-Prod",
+                "state": "available",
+                "defaultAssociation": false,
+                "defaultPropagation": false,
+                "routes": [
+                  {
+                    "destination": "0.0.0.0/0",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                    "attachmentId": "tgw-attach-031b424985fa15de4"
+                  },
+                  {
+                    "destination": "10.159.64.0/18",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                    "attachmentId": "tgw-attach-031b424985fa15de4"
+                  },
+                  {
+                    "destination": "10.199.0.0/16",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "peering:tgw-0f794004ff6748b98",
+                    "attachmentId": "tgw-attach-0afd6ebaa9be1f1fe"
+                  }
+                ]
+              },
+              {
+                "id": "tgw-rtb-0961e9c4c8aa65a29",
+                "name": "TGWRT-DR-Spoke-Prod",
+                "state": "available",
+                "defaultAssociation": false,
+                "defaultPropagation": false,
+                "routes": [
+                  {
+                    "destination": "0.0.0.0/0",
+                    "state": "active",
+                    "type": "static",
+                    "targetSummary": "vpc:vpc-028bfb7f2d8b84cbf",
+                    "attachmentId": "tgw-attach-0b40fa2765d8daa63"
+                  }
+                ]
+              }
+            ]
           }
         ],
         "connectedGraphNodeIds": [
@@ -1013,6 +1930,73 @@
         ],
         "attachmentCount": 1,
         "peeringCount": 3,
+        "routeTables": [
+          {
+            "id": "tgw-rtb-028b118c15fbeed13",
+            "name": "RT_Prod_EWSC-Spoke_TCK",
+            "state": "available",
+            "defaultAssociation": true,
+            "defaultPropagation": true,
+            "routes": [
+              {
+                "destination": "0.0.0.0/0",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "peering:tgw-00c51b4708a49e3c0",
+                "attachmentId": "tgw-attach-0886383021a3345b6"
+              },
+              {
+                "destination": "10.107.0.0/16",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "peering:tgw-08ce130fec5a8960f",
+                "attachmentId": "tgw-attach-00ebbd69b2c46f7b1"
+              },
+              {
+                "destination": "10.158.192.0/18",
+                "state": "active",
+                "type": "propagated",
+                "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                "attachmentId": "tgw-attach-0cb09bfcfb9ebc838"
+              },
+              {
+                "destination": "10.159.128.0/19",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "peering:tgw-08ce130fec5a8960f",
+                "attachmentId": "tgw-attach-00ebbd69b2c46f7b1"
+              },
+              {
+                "destination": "10.159.160.0/20",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "peering:tgw-08ce130fec5a8960f",
+                "attachmentId": "tgw-attach-00ebbd69b2c46f7b1"
+              },
+              {
+                "destination": "10.159.224.0/19",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "peering:tgw-025766b1f30ab631a",
+                "attachmentId": "tgw-attach-0a51388aa94e53510"
+              },
+              {
+                "destination": "10.159.64.0/18",
+                "state": "active",
+                "type": "propagated",
+                "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                "attachmentId": "tgw-attach-0cb09bfcfb9ebc838"
+              },
+              {
+                "destination": "142.250.21.94/32",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                "attachmentId": "tgw-attach-0cb09bfcfb9ebc838"
+              }
+            ]
+          }
+        ],
         "graphNodeId": "tgw:tgw-07a7e47fad4adddaa",
         "connectedGraphNodeIds": [
           "external-tgw-peer:tgw-07a7e47fad4adddaa:tgw-00c51b4708a49e3c0:981045337300",
@@ -1032,6 +2016,54 @@
         ],
         "attachmentCount": 2,
         "peeringCount": 1,
+        "routeTables": [
+          {
+            "id": "tgw-rtb-00b75e32ecbf7bc81",
+            "name": "TGWRT-DR-Security-Prod",
+            "state": "available",
+            "defaultAssociation": false,
+            "defaultPropagation": false,
+            "routes": [
+              {
+                "destination": "0.0.0.0/0",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                "attachmentId": "tgw-attach-031b424985fa15de4"
+              },
+              {
+                "destination": "10.159.64.0/18",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "vpc:vpc-0a0fb3ab856e73fa4",
+                "attachmentId": "tgw-attach-031b424985fa15de4"
+              },
+              {
+                "destination": "10.199.0.0/16",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "peering:tgw-0f794004ff6748b98",
+                "attachmentId": "tgw-attach-0afd6ebaa9be1f1fe"
+              }
+            ]
+          },
+          {
+            "id": "tgw-rtb-0961e9c4c8aa65a29",
+            "name": "TGWRT-DR-Spoke-Prod",
+            "state": "available",
+            "defaultAssociation": false,
+            "defaultPropagation": false,
+            "routes": [
+              {
+                "destination": "0.0.0.0/0",
+                "state": "active",
+                "type": "static",
+                "targetSummary": "vpc:vpc-028bfb7f2d8b84cbf",
+                "attachmentId": "tgw-attach-0b40fa2765d8daa63"
+              }
+            ]
+          }
+        ],
         "graphNodeId": "tgw:tgw-09486d761c59015fd",
         "connectedGraphNodeIds": [
           "external-tgw-peer:tgw-09486d761c59015fd:tgw-0f794004ff6748b98:420009094734",

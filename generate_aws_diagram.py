@@ -95,6 +95,16 @@ class AWSNetworkDiagramGenerator:
             setattr(self, attribute, resources)
             print(f"  ✓ {label}: {len(resources)} 個")
 
+        # Load TGW routes (optional file)
+        tgw_routes_payload = self.load_json("tgw-routes.json")
+        self.tgw_routes_by_table: dict[str, list[JsonObject]] = {}
+        raw_routes = tgw_routes_payload.get("TransitGatewayRoutesByTable", {})
+        if isinstance(raw_routes, dict):
+            for rt_id, routes in raw_routes.items():
+                self.tgw_routes_by_table[rt_id] = self._as_object_list(routes)
+        total_routes = sum(len(v) for v in self.tgw_routes_by_table.values())
+        print(f"  ✓ TGW Routes: {total_routes} 條 ({len(self.tgw_routes_by_table)} tables)")
+
         print("--------------------------------------------------")
 
     def _get_name_from_tags(self, tags: list[JsonObject] | None, default: str) -> str:
@@ -731,6 +741,9 @@ class AWSNetworkDiagramGenerator:
         tags = self._tag_lookup(self._as_object_list(subnet.get("Tags")))
         routes = self._get_subnet_route_info(subnet_id)
 
+        # Full route entries for path tracing
+        raw_routes = self._get_subnet_raw_routes(subnet_id)
+
         return {
             "id": subnet_id,
             "name": self._get_name_from_tags(
@@ -748,7 +761,61 @@ class AWSNetworkDiagramGenerator:
                 subnet.get("MapPublicIpOnLaunch"), False
             ),
             "routeSummary": routes,
+            "routeEntries": raw_routes,
         }
+
+    def _get_subnet_raw_routes(self, subnet_id: str) -> list[JsonObject]:
+        """Return structured route entries for a subnet for path tracing."""
+        entries: list[JsonObject] = []
+        seen: set[str] = set()
+
+        for route_table in self._get_effective_route_tables_for_subnet(subnet_id):
+            rt_id = self._as_str(route_table.get("RouteTableId"), "")
+            for route in self._as_object_list(route_table.get("Routes", [])):
+                dest_cidr = self._as_str(route.get("DestinationCidrBlock"), "")
+                dest_pl = self._as_str(route.get("DestinationPrefixListId"), "")
+                destination = dest_cidr or dest_pl
+                if not destination:
+                    continue
+
+                state = self._as_str(route.get("State"), "unknown")
+
+                # Determine next hop
+                next_hop_id = ""
+                next_hop_type = ""
+                for hop_key, hop_type in [
+                    ("GatewayId", "gateway"),
+                    ("NatGatewayId", "nat-gateway"),
+                    ("TransitGatewayId", "transit-gateway"),
+                    ("VpcPeeringConnectionId", "vpc-peering"),
+                    ("InstanceId", "instance"),
+                    ("NetworkInterfaceId", "eni"),
+                ]:
+                    val = self._as_str(route.get(hop_key), "")
+                    if val:
+                        next_hop_id = val
+                        next_hop_type = hop_type
+                        break
+
+                if next_hop_id == "local":
+                    next_hop_type = "local"
+
+                dedup_key = f"{destination}|{next_hop_id}"
+                if dedup_key in seen:
+                    continue
+                seen.add(dedup_key)
+
+                entries.append(
+                    {
+                        "destination": destination,
+                        "nextHopId": next_hop_id,
+                        "nextHopType": next_hop_type,
+                        "state": state,
+                        "routeTableId": rt_id,
+                    }
+                )
+
+        return entries
 
     def _load_balancer_payload(self, load_balancer: JsonObject) -> JsonObject:
         attached_subnets = [
@@ -827,6 +894,66 @@ class AWSNetworkDiagramGenerator:
             and self._as_str(attachment.get("ResourceType")) == "vpc"
         ]
         peerings = self._find_peering_for_tgw(transit_gateway_id)
+
+        route_tables = []
+        for rt in self.tgw_route_tables:
+            if self._as_str(rt.get("TransitGatewayId")) != transit_gateway_id:
+                continue
+            rt_id = self._as_str(rt.get("TransitGatewayRouteTableId"), "unknown-rtb")
+            rt_name = self._get_name_from_tags(
+                self._as_object_list(rt.get("Tags")), rt_id
+            )
+
+            # Attach route entries from tgw-routes.json
+            raw_routes = self.tgw_routes_by_table.get(rt_id, [])
+            route_entries = []
+            for route in raw_routes:
+                dest = self._as_str(route.get("DestinationCidrBlock"), "")
+                state = self._as_str(route.get("State"), "unknown")
+                route_type = self._as_str(route.get("Type"), "unknown")
+                attachments = self._as_object_list(
+                    route.get("TransitGatewayAttachments", [])
+                )
+                target_summary = ""
+                if attachments:
+                    first = attachments[0]
+                    res_id = self._as_str(first.get("ResourceId"), "")
+                    res_type = self._as_str(first.get("ResourceType"), "")
+                    attach_id = self._as_str(
+                        first.get("TransitGatewayAttachmentId"), ""
+                    )
+                    target_summary = f"{res_type}:{res_id}"
+                route_entries.append(
+                    {
+                        "destination": dest,
+                        "state": state,
+                        "type": route_type,
+                        "targetSummary": target_summary,
+                        "attachmentId": (
+                            self._as_str(
+                                attachments[0].get("TransitGatewayAttachmentId"), ""
+                            )
+                            if attachments
+                            else ""
+                        ),
+                    }
+                )
+
+            route_tables.append(
+                {
+                    "id": rt_id,
+                    "name": rt_name,
+                    "state": self._as_str(rt.get("State"), "unknown"),
+                    "defaultAssociation": self._as_bool(
+                        rt.get("DefaultAssociationRouteTable")
+                    ),
+                    "defaultPropagation": self._as_bool(
+                        rt.get("DefaultPropagationRouteTable")
+                    ),
+                    "routes": route_entries,
+                }
+            )
+
         return {
             "id": transit_gateway_id,
             "name": self._get_name_from_tags(
@@ -841,6 +968,7 @@ class AWSNetworkDiagramGenerator:
             ],
             "attachmentCount": len(vpc_attachments),
             "peeringCount": len(peerings),
+            "routeTables": route_tables,
         }
 
     def _graph_node_type_contracts(self) -> list[JsonObject]:
@@ -1297,6 +1425,7 @@ class AWSNetworkDiagramGenerator:
                     "transit-gateways.json",
                     "tgw-attachments.json",
                     "tgw-peering-attachments.json",
+                    "tgw-route-tables.json",
                     "loadbalancers.json",
                 ],
                 "graphModel": self._graph_model_contract(),
