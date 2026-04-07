@@ -33,15 +33,18 @@ const nodeStyle = (type) => NODE_STYLES[type] || NODE_STYLES['vpc'];
 
 // ── Init ──
 async function init() {
-  // Try loading from local server first (python -m http.server)
-  try {
-    const resp = await fetch('../aws-network-topology.json');
-    if (resp.ok) {
-      data = await resp.json();
-      boot();
-      return;
-    }
-  } catch (_) { /* not available, show upload UI */ }
+  // Try loading from local server or S3 hosting
+  const tryPaths = ['../aws-network-topology.json', './data/topology.json'];
+  for (const path of tryPaths) {
+    try {
+      const resp = await fetch(path);
+      if (resp.ok) {
+        data = await resp.json();
+        boot();
+        return;
+      }
+    } catch (_) { /* not available */ }
+  }
 
   showUploadUI();
 }

@@ -1,0 +1,133 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS Network Topology Viewer - S3 Static Hosting + Lambda Auto-Refresh
+
+Parameters:
+  AllowedIPs:
+    Type: CommaDelimitedList
+    Description: Comma-separated list of allowed CIDR blocks (e.g. 1.2.3.4/32,5.6.7.0/24)
+  DataRegion:
+    Type: String
+    Default: ap-northeast-2
+    Description: AWS region to fetch network data from
+  ScheduleExpression:
+    Type: String
+    Default: rate(24 hours)
+    Description: How often to refresh topology data
+
+Resources:
+  # ── S3 Bucket ──
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${AWS::StackName}-viewer'
+      WebsiteConfiguration:
+        IndexDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowFromSpecificIPs
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub '${WebsiteBucket.Arn}/*'
+            Condition:
+              IpAddress:
+                aws:SourceIp: !Ref AllowedIPs
+
+  # ── Lambda Function ──
+  TopologyLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: NetworkReadOnly
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeVpcs
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeRouteTables
+                  - ec2:DescribeInternetGateways
+                  - ec2:DescribeNatGateways
+                  - ec2:DescribeTransitGateways
+                  - ec2:DescribeTransitGatewayAttachments
+                  - ec2:DescribeTransitGatewayPeeringAttachments
+                  - ec2:DescribeTransitGatewayRouteTables
+                  - ec2:SearchTransitGatewayRoutes
+                  - elasticloadbalancing:DescribeLoadBalancers
+                  - route53:ListHostedZones
+                  - route53:GetHostedZone
+                  - route53:ListHostedZonesByVPC
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource: !Sub '${WebsiteBucket.Arn}/data/*'
+
+  TopologyLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-refresh'
+      Runtime: python3.12
+      Handler: lambda_handler.handler
+      Role: !GetAtt TopologyLambdaRole.Arn
+      Timeout: 300
+      MemorySize: 512
+      Environment:
+        Variables:
+          S3_BUCKET: !Ref WebsiteBucket
+          AWS_DATA_REGION: !Ref DataRegion
+      Code:
+        ZipFile: |
+          # Placeholder - deploy actual code via update-function-code
+          def handler(event, context):
+              return {"statusCode": 200}
+
+  # ── EventBridge Schedule ──
+  RefreshSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: !Ref ScheduleExpression
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt TopologyLambda.Arn
+          Id: TopologyRefresh
+
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref TopologyLambda
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt RefreshSchedule.Arn
+
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt WebsiteBucket.WebsiteURL
+    Description: Viewer URL (accessible from allowed IPs only)
+  BucketName:
+    Value: !Ref WebsiteBucket
+    Description: S3 bucket name
+  LambdaFunction:
+    Value: !Ref TopologyLambda
+    Description: Lambda function name
