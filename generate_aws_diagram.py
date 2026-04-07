@@ -25,6 +25,9 @@ class AWSNetworkDiagramGenerator:
         self.internet_gateways: list[JsonObject] = []
         self.nat_gateways: list[JsonObject] = []
         self.load_balancers: list[JsonObject] = []
+        self.hosted_zones: list[JsonObject] = []
+        self.hosted_zone_details: list[JsonObject] = []
+        self.hosted_zones_by_vpc: dict[str, list[JsonObject]] = {}
 
     def load_json(self, filename: str) -> JsonObject:
         try:
@@ -94,6 +97,27 @@ class AWSNetworkDiagramGenerator:
             resources = self._as_object_list(payload.get(key, []))
             setattr(self, attribute, resources)
             print(f"  ✓ {label}: {len(resources)} 個")
+
+        # Load Route 53 data (optional files)
+        hosted_zones_payload = self.load_json("hosted-zones.json")
+        self.hosted_zones = self._as_object_list(
+            hosted_zones_payload.get("HostedZones", [])
+        )
+        print(f"  ✓ Hosted Zones: {len(self.hosted_zones)} 個")
+
+        hosted_zone_details_payload = self.load_json("hosted-zone-details.json")
+        self.hosted_zone_details = self._as_object_list(
+            hosted_zone_details_payload.get("HostedZoneDetails", [])
+        )
+        print(f"  ✓ Hosted Zone Details: {len(self.hosted_zone_details)} 個")
+
+        hosted_zones_by_vpc_payload = self.load_json("hosted-zones-by-vpc.json")
+        raw_by_vpc = hosted_zones_by_vpc_payload.get("HostedZonesByVpc", {})
+        if isinstance(raw_by_vpc, dict):
+            for vpc_id, zones in raw_by_vpc.items():
+                self.hosted_zones_by_vpc[vpc_id] = self._as_object_list(zones)
+        total_vpc_zones = sum(len(v) for v in self.hosted_zones_by_vpc.values())
+        print(f"  ✓ Hosted Zones by VPC: {total_vpc_zones} 條 ({len(self.hosted_zones_by_vpc)} VPCs)")
 
         # Load TGW routes (optional file)
         tgw_routes_payload = self.load_json("tgw-routes.json")
@@ -839,6 +863,111 @@ class AWSNetworkDiagramGenerator:
             "isPublic": self._as_str(load_balancer.get("Scheme")) == "internet-facing",
         }
 
+    def _get_my_account_id(self) -> str:
+        """Infer account ID from owned hosted zone details."""
+        for detail in self.hosted_zone_details:
+            zone = self._as_object(detail.get("HostedZone"))
+            zone_id = self._as_str(zone.get("Id")).replace("/hostedzone/", "")
+            if zone_id:
+                # Check hosted-zones-by-vpc for OwningAccount
+                for zones in self.hosted_zones_by_vpc.values():
+                    for z in zones:
+                        if self._as_str(z.get("HostedZoneId")) == zone_id:
+                            owner = self._as_object(z.get("Owner", {}))
+                            acct = self._as_str(owner.get("OwningAccount"))
+                            if acct:
+                                return acct
+        return ""
+
+    def _hosted_zone_vpc_associations(self, zone_id: str) -> list[JsonObject]:
+        """Get VPC associations for an owned zone from hosted-zone-details."""
+        for detail in self.hosted_zone_details:
+            zone = self._as_object(detail.get("HostedZone"))
+            detail_zone_id = self._as_str(zone.get("Id")).replace("/hostedzone/", "")
+            if detail_zone_id == zone_id:
+                return self._as_object_list(detail.get("VPCs", []))
+        return []
+
+    def _build_route53_payload(self, vpc_id: str) -> JsonObject:
+        """Build Route 53 data for a VPC: owned zones + shared zones + service zones."""
+        my_account_id = self._get_my_account_id()
+        local_vpc_ids = {self._as_str(v.get("VpcId")) for v in self.vpcs}
+
+        # Owned zones: from hosted-zone-details where this VPC is associated
+        owned_zones: list[JsonObject] = []
+        for detail in self.hosted_zone_details:
+            zone = self._as_object(detail.get("HostedZone"))
+            zone_id = self._as_str(zone.get("Id")).replace("/hostedzone/", "")
+            zone_name = self._as_str(zone.get("Name")).rstrip(".")
+            vpcs_list = self._as_object_list(detail.get("VPCs", []))
+            associated_vpc_ids = [
+                self._as_str(v.get("VPCId")) for v in vpcs_list
+            ]
+            if vpc_id not in associated_vpc_ids:
+                continue
+
+            # Classify associated VPCs as local or cross-account
+            local_assoc = [v for v in associated_vpc_ids if v in local_vpc_ids]
+            cross_assoc = [v for v in associated_vpc_ids if v not in local_vpc_ids]
+
+            owned_zones.append({
+                "id": zone_id,
+                "name": zone_name,
+                "comment": self._as_str(
+                    self._as_object(zone.get("Config")).get("Comment")
+                ),
+                "recordCount": zone.get("ResourceRecordSetCount", 0),
+                "associatedVpcs": [
+                    {
+                        "vpcId": self._as_str(v.get("VPCId")),
+                        "region": self._as_str(v.get("VPCRegion")),
+                        "isLocal": self._as_str(v.get("VPCId")) in local_vpc_ids,
+                    }
+                    for v in vpcs_list
+                ],
+                "localVpcCount": len(local_assoc),
+                "crossAccountVpcCount": len(cross_assoc),
+            })
+
+        # Shared zones: from hosted-zones-by-vpc where OwningAccount != my account
+        shared_zones: list[JsonObject] = []
+        service_zones: list[JsonObject] = []
+        owned_zone_ids = {z["id"] for z in owned_zones}
+
+        for z in self.hosted_zones_by_vpc.get(vpc_id, []):
+            zone_id = self._as_str(z.get("HostedZoneId"))
+            zone_name = self._as_str(z.get("Name")).rstrip(".")
+            owner = self._as_object(z.get("Owner", {}))
+            owning_account = self._as_str(owner.get("OwningAccount"))
+            owning_service = self._as_str(owner.get("OwningService"))
+
+            if zone_id in owned_zone_ids:
+                continue
+
+            if owning_service:
+                service_zones.append({
+                    "id": zone_id,
+                    "name": zone_name,
+                    "owningService": owning_service,
+                })
+            elif owning_account and owning_account != my_account_id:
+                shared_zones.append({
+                    "id": zone_id,
+                    "name": zone_name,
+                    "owningAccount": owning_account,
+                })
+
+        return {
+            "ownedZones": owned_zones,
+            "sharedZones": shared_zones,
+            "serviceZones": service_zones,
+            "summary": {
+                "ownedCount": len(owned_zones),
+                "sharedCount": len(shared_zones),
+                "serviceCount": len(service_zones),
+            },
+        }
+
     def _internet_gateway_payload(self, internet_gateway: JsonObject) -> JsonObject:
         gateway_id = self._as_str(
             internet_gateway.get("InternetGatewayId"), "unknown-igw"
@@ -1318,6 +1447,7 @@ class AWSNetworkDiagramGenerator:
                 for load_balancer in self.load_balancers
                 if self._as_str(load_balancer.get("VpcId")) == vpc_id
             ]
+            route53 = self._build_route53_payload(vpc_id)
             attached_transit_gateways = [
                 self._transit_gateway_payload(tgw) for tgw in self._vpc_tgws(vpc_id)
             ]
@@ -1338,6 +1468,7 @@ class AWSNetworkDiagramGenerator:
                     "internetGateways": internet_gateways,
                     "natGateways": nat_gateways,
                     "loadBalancers": load_balancers,
+                    "route53": route53,
                     "transitGateways": attached_transit_gateways,
                     "connectedGraphNodeIds": self._sort_unique_strings(
                         [
@@ -1427,6 +1558,9 @@ class AWSNetworkDiagramGenerator:
                     "tgw-peering-attachments.json",
                     "tgw-route-tables.json",
                     "loadbalancers.json",
+                    "hosted-zones.json",
+                    "hosted-zone-details.json",
+                    "hosted-zones-by-vpc.json",
                 ],
                 "graphModel": self._graph_model_contract(),
             },
@@ -1440,6 +1574,7 @@ class AWSNetworkDiagramGenerator:
                 "internetGatewayCount": len(self.internet_gateways),
                 "natGatewayCount": len(self.nat_gateways),
                 "loadBalancerCount": len(self.load_balancers),
+                "hostedZoneCount": len(self.hosted_zones),
                 "publicLoadBalancerCount": sum(
                     1
                     for load_balancer in self.load_balancers

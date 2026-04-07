@@ -93,7 +93,10 @@ function showUploadUI() {
       "ec2:DescribeTransitGatewayPeeringAttachments",
       "ec2:DescribeTransitGatewayRouteTables",
       "ec2:SearchTransitGatewayRoutes",
-      "elasticloadbalancing:DescribeLoadBalancers"
+      "elasticloadbalancing:DescribeLoadBalancers",
+      "route53:ListHostedZones",
+      "route53:GetHostedZone",
+      "route53:ListHostedZonesByVPC"
     ],
     "Resource": "*"
   }]
@@ -112,10 +115,13 @@ aws ec2 describe-transit-gateways --profile $P --region $R --output json &gt; tr
 aws ec2 describe-transit-gateway-attachments --profile $P --region $R --output json &gt; tgw-attachments.json
 aws ec2 describe-transit-gateway-peering-attachments --profile $P --region $R --output json &gt; tgw-peering-attachments.json
 aws ec2 describe-transit-gateway-route-tables --profile $P --region $R --output json &gt; tgw-route-tables.json
-aws elbv2 describe-load-balancers --profile $P --region $R --output json &gt; loadbalancers.json</pre>
+aws elbv2 describe-load-balancers --profile $P --region $R --output json &gt; loadbalancers.json
+aws route53 list-hosted-zones --output json &gt; hosted-zones.json</pre>
           <p>3. (Optional) Export TGW routes for each route table:</p>
           <pre>bash fetch-tgw-routes.sh --profile $P --region $R</pre>
-          <p>4. Generate the topology file:</p>
+          <p>4. (Optional) Export Route 53 zone details:</p>
+          <pre>bash fetch-route53-details.sh --profile $P --region $R</pre>
+          <p>5. Generate the topology file:</p>
           <pre>python3 generate_aws_diagram.py</pre>
           <p>Then upload the generated <code>aws-network-topology.json</code> above.</p>
         </div>
@@ -175,7 +181,7 @@ function renderSummary() {
     ['VPCs', s.vpcCount], ['Subnets', s.subnetCount],
     ['TGWs', s.transitGatewayCount], ['Peers', s.transitGatewayPeeringCount],
     ['IGWs', s.internetGatewayCount], ['NAT', s.natGatewayCount],
-    ['LBs', s.loadBalancerCount],
+    ['LBs', s.loadBalancerCount], ['R53 Zones', s.hostedZoneCount],
   ];
   $('summary-badges').innerHTML = items
     .map(([l,v]) => `<span class="summary-badge">${l}: ${v||0}</span>`).join('');
@@ -991,6 +997,70 @@ function vpcPanelHtml(vpc) {
     });
     if (vpc.loadBalancers.length > 10) h += `<div style="font-size:0.72rem;color:#9ca3af">+${vpc.loadBalancers.length - 10} more</div>`;
     h += '</div>';
+  }
+
+  // Route 53 Hosted Zones
+  const r53 = vpc.route53;
+  if (r53) {
+    const { ownedZones = [], sharedZones = [], serviceZones = [] } = r53;
+    const totalZones = ownedZones.length + sharedZones.length + serviceZones.length;
+    if (totalZones > 0) {
+      h += sec(`Route 53 Zones (${totalZones})`);
+
+      if (ownedZones.length) {
+        h += '<div class="r53-group-label">📋 Owned Zones</div>';
+        ownedZones.forEach(z => {
+          const crossVpcs = (z.associatedVpcs || []).filter(v => !v.isLocal);
+          h += `<div class="subnet-mini" style="border-left:3px solid #8b5cf6">
+            <div class="subnet-mini-header">
+              <span class="subnet-mini-name">${esc(z.name)}</span>
+              <span class="subnet-mini-badge public">${z.recordCount} records</span>
+            </div>
+            ${z.comment ? `<div style="font-size:0.7rem;color:#6b7280;margin-top:2px">${esc(z.comment)}</div>` : ''}
+            <div style="font-size:0.7rem;color:#6b7280;margin-top:2px">ID: ${esc(z.id)}</div>`;
+
+          if (crossVpcs.length > 0) {
+            h += '<div class="r53-shared-to"><span class="r53-shared-label">↗ Shared to:</span>';
+            crossVpcs.forEach(v => {
+              h += `<span class="panel-badge" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6">${esc(v.vpcId)} (${esc(v.region)})</span>`;
+            });
+            h += '</div>';
+          }
+          h += '</div>';
+        });
+      }
+
+      if (sharedZones.length) {
+        h += '<div class="r53-group-label">🔗 Shared from Other Accounts</div>';
+        sharedZones.forEach(z => {
+          h += `<div class="subnet-mini" style="border-left:3px solid #0891b2">
+            <div class="subnet-mini-header">
+              <span class="subnet-mini-name">${esc(z.name)}</span>
+              <span class="subnet-mini-badge private">shared</span>
+            </div>
+            <div style="font-size:0.7rem;color:#6b7280;margin-top:2px">From account: ${esc(z.owningAccount)}</div>
+          </div>`;
+        });
+      }
+
+      if (serviceZones.length) {
+        const svcElId = `r53-svc-${vpc.id}`;
+        h += `<div class="rt-toggle" style="margin-top:4px">
+          <button class="rt-expand-btn" onclick="toggleRoutes('${svcElId}')">
+            ▶ AWS Service Zones (${serviceZones.length})
+          </button>
+          <div id="${svcElId}" class="rt-routes-list" style="display:none">`;
+        serviceZones.forEach(z => {
+          h += `<div class="subnet-mini" style="border-left:3px solid #9ca3af;padding:4px 8px">
+            <div style="font-size:0.72rem;font-weight:600;color:#374151">${esc(z.name)}</div>
+            <div style="font-size:0.65rem;color:#9ca3af">${esc(z.owningService)}</div>
+          </div>`;
+        });
+        h += '</div></div>';
+      }
+
+      h += '</div>';
+    }
   }
   return h;
 }

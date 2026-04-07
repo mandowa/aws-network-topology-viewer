@@ -356,3 +356,25 @@ h1 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
   background: #f3f4f6; padding: 1px 5px; border-radius: 3px;
   font-size: 0.75rem;
 }
+
+/* Route 53 */
+.r53-group-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 8px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.r53-shared-to {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.r53-shared-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #7c3aed;
+}

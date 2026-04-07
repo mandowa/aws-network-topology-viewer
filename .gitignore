@@ -41,6 +41,9 @@ tgw-peering-attachments.json
 tgw-route-tables.json
 tgw-routes.json
 tgw-routes-tgw-rtb-*.json
+hosted-zones.json
+hosted-zone-details.json
+hosted-zones-by-vpc.json
 
 # Logs
 *.log
