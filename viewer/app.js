@@ -952,73 +952,116 @@ function highlightTarget(nodeId) {
   }
 
   // Remove pulse after animation
-  setTimeout(() => el.classList.remove('highlight-pulse'), 2000);
+  setTimeout(() => el.classList.remove('highlight-pulse'), 15000);
 }
 
 function vpcPanelHtml(vpc) {
-  let h = sec('Network');
-  h += row('VPC ID', vpc.id) + row('CIDRs', (vpc.cidrBlocks||[]).join(', '));
-  h += row('Subnets', `${vpc.subnetCounts?.total || 0} (${vpc.subnetCounts?.public || 0} pub / ${vpc.subnetCounts?.private || 0} prv)`);
+  let uid = 0;
+  const aid = () => `acc-${vpc.id}-${uid++}`;
+
+  // ── Top summary (always visible) ──
+  let h = '<div class="vpc-summary">';
+  h += `<div class="vpc-summary-row"><span class="vpc-summary-label">VPC ID</span><span class="vpc-summary-val mono">${esc(vpc.id)}</span></div>`;
+  h += `<div class="vpc-summary-row"><span class="vpc-summary-label">CIDRs</span><span class="vpc-summary-val mono">${esc((vpc.cidrBlocks||[]).join(', '))}</span></div>`;
+  h += `<div class="vpc-summary-row"><span class="vpc-summary-label">Subnets</span><span class="vpc-summary-val">${vpc.subnetCounts?.total || 0} <span class="vpc-stat-sub">(${vpc.subnetCounts?.public || 0} pub / ${vpc.subnetCounts?.private || 0} prv)</span></span></div>`;
+  if (vpc.roleSummary) {
+    h += `<div class="vpc-summary-row"><span class="vpc-summary-label">Roles</span><span class="vpc-summary-val" style="font-size:0.72rem">${esc(vpc.roleSummary)}</span></div>`;
+  }
   h += '</div>';
 
-  if (vpc.roleSummary) h += sec('Roles') + `<div style="font-size:0.78rem">${esc(vpc.roleSummary)}</div></div>`;
+  // ── Accordion sections ──
 
-  if (vpc.internetGateways?.length) {
-    h += sec('Internet Gateways');
-    vpc.internetGateways.forEach(gw => { h += `<div class="subnet-mini"><div class="subnet-mini-name">🌍 ${esc(gw.name)}</div><div style="font-size:0.7rem;color:#6b7280">${esc(gw.id)}</div></div>`; });
+  // Gateways
+  const igws = vpc.internetGateways || [];
+  const nats = vpc.natGateways || [];
+  const gwCount = igws.length + nats.length;
+  if (gwCount > 0) {
+    const id = aid();
+    h += accHeader(id, `🌐 Gateways (${gwCount})`, false);
+    h += accBody(id);
+    igws.forEach(gw => {
+      h += `<div class="acc-item"><span class="acc-item-icon">🌍</span><div><div class="acc-item-name">IGW: ${esc(gw.name)}</div><div class="acc-item-meta">${esc(gw.id)}</div></div></div>`;
+    });
+    nats.forEach(gw => {
+      h += `<div class="acc-item"><span class="acc-item-icon">🔄</span><div><div class="acc-item-name">NAT: ${esc(gw.name)}</div><div class="acc-item-meta">${esc(gw.state || '')} · ${(gw.publicIps||[]).join(', ')}</div></div></div>`;
+    });
     h += '</div>';
   }
-  if (vpc.natGateways?.length) {
-    h += sec('NAT Gateways');
-    vpc.natGateways.forEach(gw => { h += `<div class="subnet-mini"><div class="subnet-mini-name">🔄 ${esc(gw.name)}</div>${row('State', gw.state)}${row('Public IP', (gw.publicIps||[]).join(', '))}</div>`; });
-    h += '</div>';
-  }
 
-  (vpc.availabilityZones || []).forEach(az => {
-    h += sec(az.availabilityZone);
-    (az.subnets || []).forEach(sub => {
-      const cc = catColor(sub.category);
-      h += `<div class="subnet-mini" style="border-left:3px solid ${cc.text}">
-        <div class="subnet-mini-header"><span class="subnet-mini-name">${cc.icon} ${esc(sub.displayName || sub.name)}</span>
-        <span class="subnet-mini-badge ${sub.isPublic?'public':'private'}">${sub.isPublic?'public':'private'}</span></div>
-        ${row('CIDR', sub.cidr)}${row('Category', sub.category)}`;
-      if (sub.routeSummary?.length) {
-        h += '<div style="margin-top:4px"><div style="font-size:0.65rem;color:#9ca3af;text-transform:uppercase">Routes</div>' + badges(sub.routeSummary) + '</div>';
-      }
+  // Subnets by AZ
+  const azs = vpc.availabilityZones || [];
+  const totalSubs = azs.reduce((n, az) => n + (az.subnets||[]).length, 0);
+  if (totalSubs > 0) {
+    const id = aid();
+    h += accHeader(id, `📦 Subnets by AZ (${totalSubs})`, false);
+    h += accBody(id);
+    azs.forEach(az => {
+      const subs = az.subnets || [];
+      const azId = aid();
+      h += accHeader(azId, `⬡ ${esc(az.availabilityZone)} (${subs.length})`, false, true);
+      h += accBody(azId);
+      subs.forEach(sub => {
+        const cc = catColor(sub.category);
+        h += `<div class="acc-subnet" style="border-left:3px solid ${cc.text}">
+          <div class="acc-subnet-top">
+            <span class="acc-item-name">${cc.icon} ${esc(sub.displayName || sub.name)}</span>
+            <span class="subnet-mini-badge ${sub.isPublic?'public':'private'}">${sub.isPublic?'pub':'prv'}</span>
+          </div>
+          <div class="acc-item-meta">${esc(sub.cidr)} · ${esc(sub.category || '')}</div>
+        </div>`;
+      });
       h += '</div>';
     });
     h += '</div>';
-  });
+  }
 
-  if (vpc.loadBalancers?.length) {
-    h += sec(`Load Balancers (${vpc.loadBalancers.length})`);
-    vpc.loadBalancers.slice(0, 10).forEach(lb => {
-      h += `<div class="subnet-mini"><div class="subnet-mini-header"><span class="subnet-mini-name">${esc(lb.name)}</span><span class="subnet-mini-badge ${lb.isPublic?'public':'private'}">${lb.type}</span></div></div>`;
+  // Load Balancers
+  const lbs = vpc.loadBalancers || [];
+  if (lbs.length > 0) {
+    const id = aid();
+    const albCount = lbs.filter(l => l.type === 'application').length;
+    const nlbCount = lbs.filter(l => l.type === 'network').length;
+    h += accHeader(id, `⚖️ Load Balancers (${lbs.length})`, false);
+    h += accBody(id);
+    h += `<div class="acc-lb-stats">
+      <span class="acc-lb-tag alb">ALB: ${albCount}</span>
+      <span class="acc-lb-tag nlb">NLB: ${nlbCount}</span>
+      <span class="acc-lb-tag pub">Public: ${lbs.filter(l=>l.isPublic).length}</span>
+      <span class="acc-lb-tag prv">Internal: ${lbs.filter(l=>!l.isPublic).length}</span>
+    </div>`;
+    lbs.forEach(lb => {
+      const typeIcon = lb.type === 'application' ? '🔵' : '🟢';
+      const schemeIcon = lb.isPublic ? '🌐' : '🔒';
+      h += `<div class="acc-item">
+        <span class="acc-item-icon">${typeIcon}</span>
+        <div>
+          <div class="acc-item-name">${esc(lb.name)}</div>
+          <div class="acc-item-meta">${schemeIcon} ${lb.isPublic?'internet-facing':'internal'} · ${lb.type}</div>
+        </div>
+      </div>`;
     });
-    if (vpc.loadBalancers.length > 10) h += `<div style="font-size:0.72rem;color:#9ca3af">+${vpc.loadBalancers.length - 10} more</div>`;
     h += '</div>';
   }
 
-  // Route 53 Hosted Zones
+  // Route 53
   const r53 = vpc.route53;
   if (r53) {
     const { ownedZones = [], sharedZones = [], serviceZones = [] } = r53;
     const totalZones = ownedZones.length + sharedZones.length + serviceZones.length;
     if (totalZones > 0) {
-      h += sec(`Route 53 Zones (${totalZones})`);
+      const id = aid();
+      h += accHeader(id, `🌏 Route 53 Zones (${totalZones})`, false);
+      h += accBody(id);
 
       if (ownedZones.length) {
         h += '<div class="r53-group-label">📋 Owned Zones</div>';
         ownedZones.forEach(z => {
           const crossVpcs = (z.associatedVpcs || []).filter(v => !v.isLocal);
-          h += `<div class="subnet-mini" style="border-left:3px solid #8b5cf6">
-            <div class="subnet-mini-header">
-              <span class="subnet-mini-name">${esc(z.name)}</span>
-              <span class="subnet-mini-badge public">${z.recordCount} records</span>
-            </div>
-            ${z.comment ? `<div style="font-size:0.7rem;color:#6b7280;margin-top:2px">${esc(z.comment)}</div>` : ''}
-            <div style="font-size:0.7rem;color:#6b7280;margin-top:2px">ID: ${esc(z.id)}</div>`;
-
+          h += `<div class="acc-item" style="border-left:3px solid #8b5cf6;align-items:flex-start">
+            <div style="flex:1">
+              <div class="acc-item-name">${esc(z.name)} <span class="acc-item-count">${z.recordCount} records</span></div>
+              ${z.comment ? `<div class="acc-item-meta">${esc(z.comment)}</div>` : ''}
+              <div class="acc-item-meta mono">${esc(z.id)}</div>`;
           if (crossVpcs.length > 0) {
             h += '<div class="r53-shared-to"><span class="r53-shared-label">↗ Shared to:</span>';
             crossVpcs.forEach(v => {
@@ -1026,43 +1069,62 @@ function vpcPanelHtml(vpc) {
             });
             h += '</div>';
           }
-          h += '</div>';
+          h += '</div></div>';
         });
       }
 
       if (sharedZones.length) {
         h += '<div class="r53-group-label">🔗 Shared from Other Accounts</div>';
         sharedZones.forEach(z => {
-          h += `<div class="subnet-mini" style="border-left:3px solid #0891b2">
-            <div class="subnet-mini-header">
-              <span class="subnet-mini-name">${esc(z.name)}</span>
-              <span class="subnet-mini-badge private">shared</span>
-            </div>
-            <div style="font-size:0.7rem;color:#6b7280;margin-top:2px">From account: ${esc(z.owningAccount)}</div>
+          h += `<div class="acc-item" style="border-left:3px solid #0891b2">
+            <div><div class="acc-item-name">${esc(z.name)}</div>
+            <div class="acc-item-meta">From account: ${esc(z.owningAccount)}</div></div>
           </div>`;
         });
       }
 
       if (serviceZones.length) {
-        const svcElId = `r53-svc-${vpc.id}`;
-        h += `<div class="rt-toggle" style="margin-top:4px">
-          <button class="rt-expand-btn" onclick="toggleRoutes('${svcElId}')">
-            ▶ AWS Service Zones (${serviceZones.length})
-          </button>
-          <div id="${svcElId}" class="rt-routes-list" style="display:none">`;
+        const svcId = aid();
+        h += accHeader(svcId, `⚙️ AWS Service Zones (${serviceZones.length})`, false, true);
+        h += accBody(svcId);
         serviceZones.forEach(z => {
-          h += `<div class="subnet-mini" style="border-left:3px solid #9ca3af;padding:4px 8px">
-            <div style="font-size:0.72rem;font-weight:600;color:#374151">${esc(z.name)}</div>
-            <div style="font-size:0.65rem;color:#9ca3af">${esc(z.owningService)}</div>
+          h += `<div class="acc-item" style="border-left:3px solid #9ca3af">
+            <div><div class="acc-item-name" style="font-size:0.72rem">${esc(z.name)}</div>
+            <div class="acc-item-meta">${esc(z.owningService)}</div></div>
           </div>`;
         });
-        h += '</div></div>';
+        h += '</div>';
       }
 
       h += '</div>';
     }
   }
+
+  // Relationships
   return h;
+}
+
+// ── Accordion helpers ──
+function accHeader(id, title, open = false, nested = false) {
+  const cls = nested ? 'acc-header nested' : 'acc-header';
+  const arrow = open ? '▼' : '▶';
+  return `<div class="${cls}" onclick="toggleAcc('${id}')" data-acc-id="${id}"><span class="acc-arrow">${arrow}</span>${title}</div>`;
+}
+function accBody(id) {
+  return `<div class="acc-body" id="${id}" style="display:none">`;
+}
+function toggleAcc(id) {
+  const body = document.getElementById(id);
+  if (!body) return;
+  const header = document.querySelector(`[data-acc-id="${id}"]`);
+  const arrow = header?.querySelector('.acc-arrow');
+  if (body.style.display === 'none') {
+    body.style.display = 'block';
+    if (arrow) arrow.textContent = '▼';
+  } else {
+    body.style.display = 'none';
+    if (arrow) arrow.textContent = '▶';
+  }
 }
 
 function tgwPanelHtml(tgw) {
@@ -1401,10 +1463,10 @@ function highlightTraceNodes(steps) {
     const el = document.querySelector(`[data-node-id="${CSS.escape(s.id)}"]`);
     if (el) el.classList.add('highlight-pulse');
   });
-  // Remove after 3s
+  // Remove after 15s
   setTimeout(() => {
     document.querySelectorAll('.node-group.highlight-pulse').forEach(el => el.classList.remove('highlight-pulse'));
-  }, 3000);
+  }, 15000);
 }
 
 // ── Events ──

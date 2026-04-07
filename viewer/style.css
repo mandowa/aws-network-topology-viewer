@@ -378,3 +378,144 @@ h1 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
   font-weight: 600;
   color: #7c3aed;
 }
+
+/* VPC Panel Summary */
+.vpc-summary {
+  padding: 4px 0 8px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 6px;
+}
+.vpc-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 2px 0;
+  font-size: 0.78rem;
+}
+.vpc-summary-label {
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 60px;
+}
+.vpc-summary-val {
+  color: #111827;
+  text-align: right;
+  flex: 1;
+  margin-left: 8px;
+}
+.vpc-summary-val.mono {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+.vpc-stat-sub {
+  color: #9ca3af;
+  font-size: 0.7rem;
+}
+
+/* Accordion */
+.acc-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 4px;
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1f2937;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+  user-select: none;
+  transition: background 0.15s;
+}
+.acc-header:hover {
+  background: #f9fafb;
+  border-radius: 4px;
+}
+.acc-header.nested {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: #374151;
+  padding: 6px 4px 6px 8px;
+  border-bottom: 1px solid #f9fafb;
+}
+.acc-arrow {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  width: 12px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.acc-body {
+  padding: 2px 0 4px 4px;
+}
+
+/* Accordion items */
+.acc-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px;
+  border-radius: 4px;
+  transition: background 0.12s;
+}
+.acc-item:hover {
+  background: #f9fafb;
+}
+.acc-item-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.acc-item-name {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.3;
+}
+.acc-item-meta {
+  font-size: 0.68rem;
+  color: #6b7280;
+  line-height: 1.3;
+}
+.acc-item-meta.mono {
+  font-family: var(--font-mono);
+}
+.acc-item-count {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: #9ca3af;
+  margin-left: 4px;
+}
+
+/* Subnet items in accordion */
+.acc-subnet {
+  padding: 4px 8px;
+  margin: 2px 0;
+  border-radius: 4px;
+  transition: background 0.12s;
+}
+.acc-subnet:hover {
+  background: #f9fafb;
+}
+.acc-subnet-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* LB stats bar */
+.acc-lb-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 6px 8px;
+}
+.acc-lb-tag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.acc-lb-tag.alb { background: #dbeafe; color: #1e40af; }
+.acc-lb-tag.nlb { background: #d1fae5; color: #065f46; }
+.acc-lb-tag.pub { background: #fef3c7; color: #92400e; }
+.acc-lb-tag.prv { background: #f3f4f6; color: #374151; }
