@@ -26,6 +26,9 @@ htmlcov/
 # Ruff cache
 .ruff_cache/
 
+# Kiro IDE
+.kiro/
+
 # Project specific - AWS data files (contain sensitive infra info)
 aws-network-topology.json
 aws-network-architecture.drawio
