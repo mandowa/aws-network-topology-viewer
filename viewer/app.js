@@ -297,7 +297,7 @@ function layoutDiagram() {
     azPad: 14, azHeader: 24,
     vpcHeader: 44, vpcPad: 18, vpcGap: 50,
     gwH: 36, gwW: 120, gwGap: 10,
-    tgwW: 200, tgwH: 76,
+    tgwW: 260, tgwH: 76,
     extW: 180, extH: 64,
   };
 
@@ -735,7 +735,8 @@ function renderTgwNode(n) {
       const rtBorder = isDefault ? '#f59e0b' : '#fde68a';
 
       s += `<rect x="8" y="${ry}" width="${n.w - 16}" height="24" rx="4" fill="${rtBg}" stroke="${rtBorder}" stroke-width="0.75"/>`;
-      s += `<text x="14" y="${ry + 10}" font-size="8" font-weight="600" fill="#78350f">📋 ${esc(rt.name)}</text>`;
+      const rtName = rt.name.length > 24 ? rt.name.slice(0, 23) + '…' : rt.name;
+      s += `<text x="14" y="${ry + 10}" font-size="8" font-weight="600" fill="#78350f">📋 ${esc(rtName)}</text>`;
       s += `<text x="14" y="${ry + 20}" font-size="7" font-family="var(--font-mono)" fill="#92400e" opacity="0.7">${esc(rt.id)}</text>`;
 
       // Default badges
@@ -834,10 +835,16 @@ function fitToScreen() {
   const cw = wrap.clientWidth;
   const ch = wrap.clientHeight;
   if (!vw || !vh || !cw || !ch) return;
-  const scale = Math.min(cw / vw, ch / vh) * 0.92;
+
+  // Calibrated for 1920x846 viewport
+  const refW = 1920, refH = 846;
+  const refK = 1.1060, refX = 43.7, refY = -33.6;
+
+  // Scale proportionally to current viewport
+  const scale = refK * Math.min(cw / refW, ch / refH);
   transform.k = scale;
-  transform.x = (cw - vw * scale) / 2;
-  transform.y = Math.max(10, (ch - vh * scale) / 2);
+  transform.x = (refX / refW) * cw;
+  transform.y = (refY / refH) * ch;
   applyTransform();
 }
 
@@ -1660,6 +1667,22 @@ function setupEvents() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') hidePanel();
     if (e.key === '0' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); fitToScreen(); }
+    // Press 'P' to print current transform (for calibrating default position)
+    if (e.key === 'p' || e.key === 'P') {
+      const wrap = document.querySelector('.canvas-wrap');
+      const svg = $('diagram-svg');
+      const vb = svg.getAttribute('viewBox');
+      console.log(`%c📐 Current Transform`, 'font-weight:bold;font-size:14px');
+      console.log(`  k (scale): ${transform.k}`);
+      console.log(`  x: ${transform.x}`);
+      console.log(`  y: ${transform.y}`);
+      console.log(`  viewport: ${wrap.clientWidth} x ${wrap.clientHeight}`);
+      console.log(`  viewBox: ${vb}`);
+      console.log(`%cPaste into fitToScreen():`, 'color:#2563eb');
+      console.log(`  transform.k = ${transform.k.toFixed(4)};`);
+      console.log(`  transform.x = ${transform.x.toFixed(1)};`);
+      console.log(`  transform.y = ${transform.y.toFixed(1)};`);
+    }
   });
 
   window.addEventListener('resize', fitToScreen);
