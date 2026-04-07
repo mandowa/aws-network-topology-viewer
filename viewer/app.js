@@ -260,20 +260,33 @@ function layoutDiagram() {
       }
     });
 
-    // Filter: only primary VPC; other VPCs only if connected via TGW
-    const visibleVpcIds = new Set();
-    visibleVpcIds.add(primaryVpc.graphNodeId);
-    allVpcs.forEach(v => {
-      if (connectedNodeIds.has(v.graphNodeId)) visibleVpcIds.add(v.graphNodeId);
+    // Filter: only primary VPC in default view
+    vpcs = [primaryVpc];
+    const primaryVpcNodeId = primaryVpc.graphNodeId;
+
+    // Only show edges connected to primary VPC or its TGWs
+    const visibleNodeIds = new Set([primaryVpcNodeId]);
+    allEdges.forEach(e => {
+      if (e.source === primaryVpcNodeId || e.target === primaryVpcNodeId) {
+        visibleNodeIds.add(e.source);
+        visibleNodeIds.add(e.target);
+      }
+    });
+    // Add TGW peers connected to primary's TGWs
+    const primaryTgwIds = new Set();
+    allEdges.forEach(e => {
+      if ((e.source === primaryVpcNodeId || e.target === primaryVpcNodeId) && e.type === 'tgw-attachment') {
+        primaryTgwIds.add(e.source.startsWith('tgw:') ? e.source : e.target);
+      }
+    });
+    allEdges.forEach(e => {
+      if (e.type === 'tgw-peering' && (primaryTgwIds.has(e.source) || primaryTgwIds.has(e.target))) {
+        visibleNodeIds.add(e.source);
+        visibleNodeIds.add(e.target);
+      }
     });
 
-    vpcs = allVpcs.filter(v => visibleVpcIds.has(v.graphNodeId));
-    // Filter edges to only include visible nodes
-    const allVisibleNodes = new Set([...visibleVpcIds]);
-    tgws.forEach(t => { if (connectedNodeIds.has(t.graphNodeId)) allVisibleNodes.add(t.graphNodeId); });
-    extTgws.forEach(t => { if (connectedNodeIds.has(t.graphNodeId)) allVisibleNodes.add(t.graphNodeId); });
-    extVpcs.forEach(t => { if (connectedNodeIds.has(t.graphNodeId)) allVisibleNodes.add(t.graphNodeId); });
-    edges = allEdges.filter(e => allVisibleNodes.has(e.source) || allVisibleNodes.has(e.target));
+    edges = allEdges.filter(e => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target));
   }
 
   // Layout constants
@@ -1626,7 +1639,7 @@ function setupEvents() {
   if (vpcToggle) {
     vpcToggle.addEventListener('click', () => {
       showAllVpcs = !showAllVpcs;
-      vpcToggle.textContent = showAllVpcs ? '🔲 All VPCs' : '🔲 Main VPC';
+      vpcToggle.textContent = showAllVpcs ? 'All VPCs ▾' : 'Main VPC ▾';
       vpcToggle.title = showAllVpcs ? 'Showing all VPCs — click to show main only' : 'Showing main VPC — click to show all';
       layoutCache = layoutDiagram();
       renderDiagram();

@@ -85,6 +85,15 @@ h1 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
 }
 .tool-btn:hover { background: #e5e7eb; border-color: var(--accent); }
 
+.vpc-filter-btn {
+  width: auto;
+  padding: 0 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  gap: 4px;
+  white-space: nowrap;
+}
+
 .canvas-wrap {
   flex: 1; overflow: hidden; position: relative;
   cursor: grab;
