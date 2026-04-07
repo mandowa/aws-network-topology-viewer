@@ -264,23 +264,24 @@ function layoutDiagram() {
     vpcs = [primaryVpc];
     const primaryVpcNodeId = primaryVpc.graphNodeId;
 
-    // Only show edges connected to primary VPC or its TGWs
+    // Collect all visible node IDs starting from primary VPC
     const visibleNodeIds = new Set([primaryVpcNodeId]);
+
+    // Add TGWs connected to primary VPC
     allEdges.forEach(e => {
-      if (e.source === primaryVpcNodeId || e.target === primaryVpcNodeId) {
+      if (e.type === 'tgw-attachment' && (e.source === primaryVpcNodeId || e.target === primaryVpcNodeId)) {
+        visibleNodeIds.add(e.source);
+        visibleNodeIds.add(e.target);
+      }
+      if (e.type === 'vpc-peering' && (e.source === primaryVpcNodeId || e.target === primaryVpcNodeId)) {
         visibleNodeIds.add(e.source);
         visibleNodeIds.add(e.target);
       }
     });
-    // Add TGW peers connected to primary's TGWs
-    const primaryTgwIds = new Set();
+
+    // Add TGW peers connected to those TGWs
     allEdges.forEach(e => {
-      if ((e.source === primaryVpcNodeId || e.target === primaryVpcNodeId) && e.type === 'tgw-attachment') {
-        primaryTgwIds.add(e.source.startsWith('tgw:') ? e.source : e.target);
-      }
-    });
-    allEdges.forEach(e => {
-      if (e.type === 'tgw-peering' && (primaryTgwIds.has(e.source) || primaryTgwIds.has(e.target))) {
+      if (e.type === 'tgw-peering' && (visibleNodeIds.has(e.source) || visibleNodeIds.has(e.target))) {
         visibleNodeIds.add(e.source);
         visibleNodeIds.add(e.target);
       }
@@ -608,7 +609,7 @@ function renderDiagram() {
   svg.innerHTML = s;
   applyTransform();
 
-  if (transform.k === 1 && transform.x === 0 && transform.y === 0) fitToScreen();
+  fitToScreen();
 }
 
 // ── VPC Node ──
@@ -832,10 +833,11 @@ function fitToScreen() {
   const [, , vw, vh] = vb.split(' ').map(Number);
   const cw = wrap.clientWidth;
   const ch = wrap.clientHeight;
-  const scale = Math.min(cw / vw, ch / vh) * 0.9;
+  if (!vw || !vh || !cw || !ch) return;
+  const scale = Math.min(cw / vw, ch / vh) * 0.92;
   transform.k = scale;
   transform.x = (cw - vw * scale) / 2;
-  transform.y = (ch - vh * scale) / 2;
+  transform.y = Math.max(10, (ch - vh * scale) / 2);
   applyTransform();
 }
 
