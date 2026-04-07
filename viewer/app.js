@@ -5,6 +5,7 @@ let drag = null;
 let selectedId = null;
 let hoveredSubnet = null;
 let layoutCache = null;
+let showAllVpcs = false;
 
 const $ = (id) => document.getElementById(id);
 const esc = (v) => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -34,7 +35,7 @@ const nodeStyle = (type) => NODE_STYLES[type] || NODE_STYLES['vpc'];
 // ── Init ──
 async function init() {
   // Try loading from local server or S3 hosting
-  const tryPaths = ['../aws-network-topology.json', './data/topology.json'];
+  const tryPaths = ['../aws-network-topology.json', '../data/topology.json', './data/topology.json'];
   for (const path of tryPaths) {
     try {
       const resp = await fetch(path);
@@ -219,11 +220,61 @@ function renderLegend() {
 // Subnets grouped by category within each AZ lane
 
 function layoutDiagram() {
-  const edges = data.topology.edges;
-  const vpcs = data.topology.vpcs;
+  const allEdges = data.topology.edges;
+  const allVpcs = data.topology.vpcs;
   const tgws = data.topology.transitGateways;
   const extTgws = data.topology.externalTransitGatewayPeers || [];
   const extVpcs = data.topology.externalVpcPeerings || [];
+
+  // ── VPC Filtering ──
+  // Find the "primary" VPC (largest subnet count, typically the main workload VPC)
+  let vpcs, edges;
+  if (showAllVpcs || allVpcs.length <= 1) {
+    vpcs = allVpcs;
+    edges = allEdges;
+  } else {
+    const primaryVpc = allVpcs.reduce((best, v) =>
+      (v.subnetCounts?.total || 0) > (best.subnetCounts?.total || 0) ? v : best
+    , allVpcs[0]);
+    const primaryNodeId = primaryVpc.graphNodeId;
+
+    // Find VPCs connected to the same TGWs as primary
+    const connectedNodeIds = new Set([primaryNodeId]);
+    allEdges.forEach(e => {
+      if (e.source === primaryNodeId || e.target === primaryNodeId) {
+        connectedNodeIds.add(e.source);
+        connectedNodeIds.add(e.target);
+      }
+    });
+    // Include VPCs that share a TGW with primary
+    const primaryTgwIds = new Set();
+    allEdges.forEach(e => {
+      if ((e.source === primaryNodeId || e.target === primaryNodeId) && e.type === 'tgw-attachment') {
+        primaryTgwIds.add(e.source.startsWith('tgw:') ? e.source : e.target);
+      }
+    });
+    allEdges.forEach(e => {
+      if (e.type === 'tgw-attachment' && (primaryTgwIds.has(e.source) || primaryTgwIds.has(e.target))) {
+        connectedNodeIds.add(e.source);
+        connectedNodeIds.add(e.target);
+      }
+    });
+
+    // Filter: only primary VPC; other VPCs only if connected via TGW
+    const visibleVpcIds = new Set();
+    visibleVpcIds.add(primaryVpc.graphNodeId);
+    allVpcs.forEach(v => {
+      if (connectedNodeIds.has(v.graphNodeId)) visibleVpcIds.add(v.graphNodeId);
+    });
+
+    vpcs = allVpcs.filter(v => visibleVpcIds.has(v.graphNodeId));
+    // Filter edges to only include visible nodes
+    const allVisibleNodes = new Set([...visibleVpcIds]);
+    tgws.forEach(t => { if (connectedNodeIds.has(t.graphNodeId)) allVisibleNodes.add(t.graphNodeId); });
+    extTgws.forEach(t => { if (connectedNodeIds.has(t.graphNodeId)) allVisibleNodes.add(t.graphNodeId); });
+    extVpcs.forEach(t => { if (connectedNodeIds.has(t.graphNodeId)) allVisibleNodes.add(t.graphNodeId); });
+    edges = allEdges.filter(e => allVisibleNodes.has(e.source) || allVisibleNodes.has(e.target));
+  }
 
   // Layout constants
   const C = {
@@ -1569,6 +1620,18 @@ function setupEvents() {
   $('zoom-reset').addEventListener('click', () => { transform = { x: 0, y: 0, k: 1 }; applyTransform(); });
   $('fit-btn').addEventListener('click', fitToScreen);
   $('panel-close').addEventListener('click', hidePanel);
+
+  // VPC filter toggle
+  const vpcToggle = $('vpc-toggle');
+  if (vpcToggle) {
+    vpcToggle.addEventListener('click', () => {
+      showAllVpcs = !showAllVpcs;
+      vpcToggle.textContent = showAllVpcs ? '🔲 All VPCs' : '🔲 Main VPC';
+      vpcToggle.title = showAllVpcs ? 'Showing all VPCs — click to show main only' : 'Showing main VPC — click to show all';
+      layoutCache = layoutDiagram();
+      renderDiagram();
+    });
+  }
 
   // Toolbar file loader
   const tbFile = $('toolbar-file');
