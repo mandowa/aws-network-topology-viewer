@@ -32,6 +32,16 @@ bash deploy/deploy.sh \
   --allowed-ips "1.2.3.4/32,5.6.7.0/24"
 ```
 
+For multi-account deployments, use `--stack-name` to avoid S3 bucket name conflicts:
+
+```bash
+# Account A (DR)
+bash deploy/deploy.sh --profile dft-dr --stack-name nw-viewer-dr --allowed-ips "..."
+
+# Account B (Prod)
+bash deploy/deploy.sh --profile dft-prod --stack-name nw-viewer-prod --allowed-ips "..."
+```
+
 This creates:
 - S3 bucket with static website hosting + IP whitelist
 - Lambda function that fetches all AWS network data via boto3
